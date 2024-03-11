@@ -1,15 +1,15 @@
 package com.sakute.project_fumo_backend.domain.enteties;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 @Entity
 @Table(name = "donations")
@@ -45,5 +45,9 @@ public class Donations {
     @ManyToOne
     @JoinColumn(name = "fundraising_id", insertable = false, updatable = false)
     private Fundraising fundraising;
+
+    public Donations() {
+
+    }
 }
 
