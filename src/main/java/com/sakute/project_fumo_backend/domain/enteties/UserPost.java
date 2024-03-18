@@ -19,9 +19,6 @@ public class UserPost {
     @Column(name = "user_post_id")
     private Long userPostId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-
     @Column(name = "photo")
     private byte[] photo;
 

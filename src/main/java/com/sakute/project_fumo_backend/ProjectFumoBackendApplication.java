@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ProjectFumoBackendApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(ProjectFumoBackendApplication.class, args);
+
     }
 
 }
