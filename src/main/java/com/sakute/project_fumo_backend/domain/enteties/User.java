@@ -2,14 +2,12 @@ package com.sakute.project_fumo_backend.domain.enteties;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "user_t")
 public class User {
 
     @Id

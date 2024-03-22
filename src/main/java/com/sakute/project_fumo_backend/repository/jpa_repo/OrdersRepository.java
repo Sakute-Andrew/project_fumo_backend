@@ -1,4 +1,4 @@
-package com.sakute.project_fumo_backend.repository.repository.impl;
+package com.sakute.project_fumo_backend.repository.jpa_repo;
 
 import com.sakute.project_fumo_backend.domain.enteties.Orders;
 import com.sakute.project_fumo_backend.domain.enteties.User;
