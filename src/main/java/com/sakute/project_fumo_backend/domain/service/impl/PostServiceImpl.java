@@ -2,9 +2,7 @@ package com.sakute.project_fumo_backend.domain.service.impl;
 
 import com.sakute.project_fumo_backend.domain.enteties.UserPost;
 import com.sakute.project_fumo_backend.domain.service.PostService;
-import com.sakute.project_fumo_backend.domain.service.dto.UserDto;
-import com.sakute.project_fumo_backend.repository.repository.impl.UserPostRepository;
-import com.sakute.project_fumo_backend.repository.repository.impl.UserRepository;
+import com.sakute.project_fumo_backend.repository.jpa_repo.UserPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
