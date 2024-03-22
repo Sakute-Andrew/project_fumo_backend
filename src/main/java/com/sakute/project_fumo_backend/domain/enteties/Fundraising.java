@@ -39,8 +39,9 @@ public class Fundraising {
     @Column(name = "end_date", nullable = false)
     private Timestamp endDate;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User userId;
 
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
@@ -52,8 +53,6 @@ public class Fundraising {
     @JoinColumn(name = "category", insertable = false, updatable = false)
     private FundraisingCategory fundraisingCategory;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
+
 }
 

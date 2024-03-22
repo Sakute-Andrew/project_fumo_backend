@@ -8,16 +8,18 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "user_post")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "user_post")
 public class UserPost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_post_id")
     private Long userPostId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false, referencedColumnName = "user_id")
+    private User userId;
 
     @Column(name = "photo")
     private byte[] photo;
@@ -36,11 +38,6 @@ public class UserPost {
 
     @Column(name = "post_topic")
     private Long postTopic;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
-
     @ManyToOne
     @JoinColumn(name = "post_topic", insertable = false, updatable = false)
     private PostTagTopic postTagTopic;

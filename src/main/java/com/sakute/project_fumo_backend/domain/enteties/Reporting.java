@@ -2,17 +2,13 @@ package com.sakute.project_fumo_backend.domain.enteties;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "reporting")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "reporting")
 public class Reporting {
 
     @Id
@@ -38,6 +34,5 @@ public class Reporting {
     @Column(name = "generated_at", nullable = false)
     private Timestamp generatedAt;
 
-    // Додаткові конструктори, гетери та сетери можна додати за потребою
 }
 

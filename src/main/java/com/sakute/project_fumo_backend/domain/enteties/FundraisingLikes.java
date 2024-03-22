@@ -19,7 +19,7 @@ public class FundraisingLikes {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User userId;
 
     @ManyToOne
     @JoinColumn(name = "fundraising_id", nullable = false)

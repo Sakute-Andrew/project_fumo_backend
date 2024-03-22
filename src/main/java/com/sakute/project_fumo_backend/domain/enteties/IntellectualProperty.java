@@ -10,10 +10,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "intellectual_property")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "intellectual_property")
 public class IntellectualProperty {
 
     @Id

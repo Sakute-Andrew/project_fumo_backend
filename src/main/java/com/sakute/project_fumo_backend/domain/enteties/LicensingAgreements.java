@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "licensing_agreements")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "licensing_agreements")
 public class LicensingAgreements {
 
     @Id

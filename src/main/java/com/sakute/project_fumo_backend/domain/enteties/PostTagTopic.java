@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@Table(name = "post_tag_topic")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "post_tag_topic")
 public class PostTagTopic {
 
     @Id

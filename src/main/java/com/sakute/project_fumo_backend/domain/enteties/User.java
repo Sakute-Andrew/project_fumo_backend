@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 @Data
-@NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 @Table(name = "user")
 public class User {
@@ -17,7 +15,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long id;
+    private Long userId;
 
     @Column(name = "username", nullable = false)
     private String username;
@@ -25,8 +23,8 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "role", nullable = false)
-    private Long role;
+    @JoinColumn(name = "role", insertable = false, updatable = false)
+    private Long userRole;
 
     @Column(name = "last_login_datetime", nullable = false)
     private Timestamp lastLoginDatetime;
@@ -34,8 +32,5 @@ public class User {
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "role", insertable = false, updatable = false)
-    private Role userRole;
 }
 
