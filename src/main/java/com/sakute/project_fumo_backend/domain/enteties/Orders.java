@@ -9,10 +9,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "orders")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "orders")
 public class Orders {
 
     @Id

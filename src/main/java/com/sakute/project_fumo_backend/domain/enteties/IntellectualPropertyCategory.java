@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@Table(name = "intellectual_property_category")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "intellectual_property_category")
 public class IntellectualPropertyCategory {
 
     @Id

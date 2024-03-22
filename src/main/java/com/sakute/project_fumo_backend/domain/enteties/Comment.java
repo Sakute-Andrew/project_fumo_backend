@@ -22,8 +22,9 @@ public class Comment {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User userId;
 
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
@@ -41,9 +42,7 @@ public class Comment {
     @JoinColumn(name = "comment_post_id", insertable = false, updatable = false)
     private UserPost userPost;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
+
 
     public Comment() {
 

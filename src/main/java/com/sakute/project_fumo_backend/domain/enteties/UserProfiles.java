@@ -6,15 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "user_profiles")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "user_profiles")
 public class UserProfiles {
 
     @Id
     @Column(name = "user_id")
-    private Long userId;
+    private Long userProfileId;
 
     @Column(name = "bio")
     private String bio;
@@ -33,7 +31,7 @@ public class UserProfiles {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User userId;
 
     // Додаткові конструктори, гетери та сетери можна додати за потребою
 }

@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@Table(name = "user_settings")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "user_settings")
 public class UserSettings {
 
     @Id

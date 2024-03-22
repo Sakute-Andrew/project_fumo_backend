@@ -10,8 +10,6 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "user_post_like")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserPostLike {
 
     @Id

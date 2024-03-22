@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "intellectual_property_comments")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "intellectual_property_comments")
 public class IntellectualPropertyComments {
 
     @Id
@@ -19,8 +17,9 @@ public class IntellectualPropertyComments {
     @Column(name = "comment_id")
     private Long commentId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User userId;
 
     @Column(name = "ip_id", nullable = false)
     private Long ipId;
@@ -30,10 +29,6 @@ public class IntellectualPropertyComments {
 
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
 
     @ManyToOne
     @JoinColumn(name = "ip_id", insertable = false, updatable = false)
