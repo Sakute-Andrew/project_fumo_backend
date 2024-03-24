@@ -20,6 +20,7 @@ public class UserProfiles {
     @Column(name = "areas_of_expertise")
     private String areasOfExpertise;
 
+    @Lob
     @Column(name = "profile_picture")
     private byte[] profilePicture;
 
