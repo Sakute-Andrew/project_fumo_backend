@@ -1,4 +1,7 @@
 package com.sakute.project_fumo_backend.domain.service;
 
-public interface FundraisingService {
+import com.sakute.project_fumo_backend.domain.Service;
+import com.sakute.project_fumo_backend.domain.enteties.Fundraising;
+
+public interface FundraisingService extends Service<Fundraising> {
 }

@@ -2,6 +2,7 @@ package com.sakute.project_fumo_backend.domain;
 
 import java.util.List;
 
+@org.springframework.stereotype.Service
 public interface Service<T>  {
     T save (T t);
     T update (T t);

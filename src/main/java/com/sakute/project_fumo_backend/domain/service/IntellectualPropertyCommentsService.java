@@ -1,4 +1,7 @@
 package com.sakute.project_fumo_backend.domain.service;
 
-public interface IntellectualPropertyCommentsService {
+import com.sakute.project_fumo_backend.domain.Service;
+import com.sakute.project_fumo_backend.domain.enteties.IntellectualPropertyComments;
+
+public interface IntellectualPropertyCommentsService extends Service<IntellectualPropertyComments> {
 }
