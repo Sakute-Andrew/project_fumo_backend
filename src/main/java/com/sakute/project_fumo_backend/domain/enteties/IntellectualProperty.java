@@ -2,12 +2,11 @@ package com.sakute.project_fumo_backend.domain.enteties;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -17,7 +16,7 @@ public class IntellectualProperty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ip_id")
-    private Long ipId;
+    private UUID ipId;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -28,8 +27,8 @@ public class IntellectualProperty {
     @Column(name = "type_ip", nullable = false)
     private String typeIp;
 
-    @Column(name = "owner_id")
-    private Long ownerId;
+    @Column(name = "user_id", nullable = false)
+    private UUID ownerId;
 
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
@@ -37,7 +36,7 @@ public class IntellectualProperty {
     @Column(name = "price", scale = 2)
     private BigDecimal price;
 
-    @Column(name = "category", nullable = false)
+    @Column(name = "category_id", nullable = false)
     private Long category;
 
     @Column(name = "file_ip")
@@ -47,11 +46,11 @@ public class IntellectualProperty {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User owner;
 
     @ManyToOne
-    @JoinColumn(name = "category", insertable = false, updatable = false)
+    @JoinColumn(name = "ip_id", insertable = false, updatable = false)
     private IntellectualPropertyCategory intellectualPropertyCategory;
 
     // Додаткові конструктори, гетери та сетери можна додати за потребою

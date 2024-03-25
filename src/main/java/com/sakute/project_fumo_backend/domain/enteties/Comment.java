@@ -32,18 +32,6 @@ public class Comment {
     @Column(name = "user_post_id", nullable = false)
     private Long userPostId;
 
-    @Column(name = "user_post_comment_id")
-    private Long userPostCommentId;
-
-    @Column(name = "comment_post_id", nullable = false)
-    private Long commentPostId;
-
-    @ManyToOne
-    @JoinColumn(name = "comment_post_id", insertable = false, updatable = false)
-    private UserPost userPost;
-
-
-
     public Comment() {
 
     }

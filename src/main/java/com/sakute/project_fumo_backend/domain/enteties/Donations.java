@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -23,8 +24,8 @@ public class Donations {
     @Column(name = "fundraising_id", nullable = false)
     private Long fundraisingId;
 
-    @Column(name = "donor_id", nullable = false)
-    private Long donorId;
+    @Column(name = "user_id", nullable = false)
+    private UUID donorId;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
@@ -39,7 +40,7 @@ public class Donations {
     private boolean anonymous;
 
     @ManyToOne
-    @JoinColumn(name = "donor_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User donor;
 
     @ManyToOne

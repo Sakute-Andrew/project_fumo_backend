@@ -2,9 +2,7 @@ package com.sakute.project_fumo_backend.domain.enteties;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 
 @Entity
@@ -17,7 +15,7 @@ public class PostTagTopic {
     @Column(name = "post_topic_id")
     private Long postTopicId;
 
-    @Column(name = "post_name")
+    @Column(name = "post_topic_name", nullable = false)
     private String postName;
 
     // Додаткові конструктори, гетери та сетери можна додати за потребою

@@ -1,11 +1,10 @@
 package com.sakute.project_fumo_backend.domain.enteties;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -15,10 +14,10 @@ public class LicensingAgreements {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "agreement_id")
-    private Long agreementId;
+    private UUID agreementId;
 
     @Column(name = "ip_id", nullable = false)
-    private Long ipId;
+    private UUID ipId;
 
     @Column(name = "license_type", nullable = false)
     private String licenseType;

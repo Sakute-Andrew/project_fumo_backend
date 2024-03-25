@@ -1,11 +1,10 @@
 package com.sakute.project_fumo_backend.domain.enteties;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -15,7 +14,7 @@ public class UserPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_post_id")
-    private Long userPostId;
+    private UUID userPostId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false, referencedColumnName = "user_id")

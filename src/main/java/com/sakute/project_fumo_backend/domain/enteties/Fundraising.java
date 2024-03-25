@@ -46,11 +46,11 @@ public class Fundraising {
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 
-    @Column(name = "category", nullable = false)
+    @Column(name = "category_id", nullable = false)
     private Long category;
 
     @ManyToOne
-    @JoinColumn(name = "category", insertable = false, updatable = false)
+    @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private FundraisingCategory fundraisingCategory;
 
 
