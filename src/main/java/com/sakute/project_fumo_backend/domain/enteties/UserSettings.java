@@ -1,9 +1,8 @@
 package com.sakute.project_fumo_backend.domain.enteties;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 
 @Entity

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "fundraising_updates")
@@ -20,7 +21,7 @@ public class FundraisingUpdates {
     private Long updateId;
 
     @Column(name = "fundraising_id", nullable = false)
-    private Long fundraisingId;
+    private UUID fundraisingId;
 
     @Column(name = "content", nullable = false)
     private String content;

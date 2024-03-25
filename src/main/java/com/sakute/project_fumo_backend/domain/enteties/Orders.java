@@ -1,12 +1,11 @@
 package com.sakute.project_fumo_backend.domain.enteties;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -16,13 +15,13 @@ public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    private Long orderId;
+    private UUID orderId;
 
     @Column(name = "customer_id", nullable = false)
-    private Long customerId;
+    private UUID customerId;
 
     @Column(name = "ip_id", nullable = false)
-    private Long ipId;
+    private UUID ipId;
 
     @Column(name = "order_date", nullable = false)
     private Timestamp orderDate;
