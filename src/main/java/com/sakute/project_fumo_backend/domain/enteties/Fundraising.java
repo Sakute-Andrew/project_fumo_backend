@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -19,7 +20,7 @@ public class Fundraising {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fundraising_id")
-    private Long id;
+    private UUID id;
 
     @Column(name = "title", nullable = false)
     private String title;

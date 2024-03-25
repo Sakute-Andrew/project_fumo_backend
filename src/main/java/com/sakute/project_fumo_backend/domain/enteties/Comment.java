@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -30,7 +31,7 @@ public class Comment {
     private Timestamp createdAt;
 
     @Column(name = "user_post_id", nullable = false)
-    private Long userPostId;
+    private UUID userPostId;
 
     public Comment() {
 

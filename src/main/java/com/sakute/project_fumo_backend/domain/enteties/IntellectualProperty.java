@@ -50,7 +50,7 @@ public class IntellectualProperty {
     private User owner;
 
     @ManyToOne
-    @JoinColumn(name = "ip_id", insertable = false, updatable = false)
+    @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private IntellectualPropertyCategory intellectualPropertyCategory;
 
     // Додаткові конструктори, гетери та сетери можна додати за потребою

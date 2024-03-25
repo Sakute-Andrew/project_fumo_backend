@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -20,7 +21,7 @@ public class IntellectualPropertyComments {
     private User userId;
 
     @Column(name = "ip_id", nullable = false)
-    private Long ipId;
+    private UUID ipId;
 
     @Column(name = "content", nullable = false)
     private String content;
