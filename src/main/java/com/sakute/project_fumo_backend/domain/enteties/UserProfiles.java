@@ -3,13 +3,14 @@ package com.sakute.project_fumo_backend.domain.enteties;
 import jakarta.persistence.*;
 import lombok.Data;
 
+
 @Entity
 @Data
 @Table(name = "user_profiles")
 public class UserProfiles {
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_profile_id")
     private Long userProfileId;
 
     @Column(name = "bio")
@@ -18,7 +19,6 @@ public class UserProfiles {
     @Column(name = "areas_of_expertise")
     private String areasOfExpertise;
 
-    @Lob
     @Column(name = "profile_picture")
     private byte[] profilePicture;
 

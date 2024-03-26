@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 
 @Entity
 @Data
@@ -11,8 +13,8 @@ import lombok.Data;
 public class UserSettings {
 
     @Id
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "user_settings_id")
+    private UUID userId;
 
     @Column(name = "email_notifications", nullable = false, columnDefinition = "boolean default true")
     private boolean emailNotifications;

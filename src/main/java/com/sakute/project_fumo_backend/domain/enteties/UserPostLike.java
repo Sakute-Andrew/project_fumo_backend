@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Entity
 @Table(name = "user_post_like")
@@ -16,10 +17,10 @@ public class UserPostLike {
     private Long likeId;
 
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private UUID userId;
 
     @Column(name = "user_post_id", nullable = false)
-    private Long userPostId;
+    private UUID userPostId;
 
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;

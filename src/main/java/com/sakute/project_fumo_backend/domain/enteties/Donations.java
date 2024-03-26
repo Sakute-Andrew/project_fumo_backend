@@ -19,13 +19,13 @@ public class Donations {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "donation_id")
-    private Long id;
+    private UUID id;
 
     @Column(name = "fundraising_id", nullable = false)
-    private Long fundraisingId;
+    private UUID fundraisingId;
 
     @Column(name = "user_id", nullable = false)
-    private UUID donorId;
+    private UUID userId;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;

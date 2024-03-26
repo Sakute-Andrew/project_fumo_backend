@@ -5,9 +5,10 @@ import com.sakute.project_fumo_backend.domain.enteties.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface OrdersRepository  extends JpaRepository<Orders, Long> {
-    Optional<Orders> findByOrderId(Long orderId);
+public interface OrdersRepository  extends JpaRepository<Orders, UUID> {
+    Optional<Orders> findByOrderId(UUID orderId);
     Optional<Orders> findByCustomer(User userId);
-    Optional<Orders> findByIpId(Long fundraisingId);
+    Optional<Orders> findByIpId(UUID fundraisingId);
 }

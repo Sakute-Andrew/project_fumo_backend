@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Timestamp;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface FundraisingRepository  extends JpaRepository<Fundraising, Long> {
-    Optional<Fundraising> findFundraisingById(Long fundraisingId);
+public interface FundraisingRepository  extends JpaRepository<Fundraising, UUID> {
+    Optional<Fundraising> findFundraisingById(UUID fundraisingId);
     Optional<Fundraising> findByUserId(User userId);
     Optional<Fundraising> findFundraisingByCategory(Long categoryId);
     Optional<Fundraising> findByTitle(String title);
