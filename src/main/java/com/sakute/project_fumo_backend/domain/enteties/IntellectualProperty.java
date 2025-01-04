@@ -14,7 +14,7 @@ import java.util.UUID;
 public class IntellectualProperty {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ip_id")
     private UUID ipId;
 

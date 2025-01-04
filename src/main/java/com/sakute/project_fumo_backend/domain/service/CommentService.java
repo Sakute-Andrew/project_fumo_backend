@@ -3,7 +3,9 @@ package com.sakute.project_fumo_backend.domain.service;
 import com.sakute.project_fumo_backend.domain.Service;
 import com.sakute.project_fumo_backend.domain.enteties.Comment;
 
-public interface CommentService extends Service<Comment>{
+import java.util.UUID;
+
+public interface CommentService extends Service<Comment, UUID>{
     /**
      * @param comment
      * @return
@@ -29,5 +31,5 @@ public interface CommentService extends Service<Comment>{
      * @return
      */
     @Override
-    Comment findById(Long id);
+    Comment findById(UUID id);
 }

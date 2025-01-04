@@ -12,7 +12,7 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
     private UUID userId;
 
@@ -22,7 +22,7 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @JoinColumn(name = "role", insertable = false, updatable = false)
+    @JoinColumn(name = "user_role", insertable = false, updatable = false)
     private Long userRole;
 
     @Column(name = "last_login_datetime", nullable = false)

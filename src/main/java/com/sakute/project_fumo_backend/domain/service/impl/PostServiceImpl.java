@@ -1,5 +1,6 @@
 package com.sakute.project_fumo_backend.domain.service.impl;
 
+import com.sakute.project_fumo_backend.domain.ServiceGeneric;
 import com.sakute.project_fumo_backend.domain.enteties.UserPost;
 import com.sakute.project_fumo_backend.domain.service.PostService;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserPostRepository;
@@ -7,14 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
+
 @Service
-public class PostServiceImpl implements PostService {
+public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements PostService  {
 
     private final UserPostRepository userPostRepository;
 
     @Autowired
     public PostServiceImpl(UserPostRepository userPostRepository) {
-        super();
+        super(userPostRepository);
         this.userPostRepository = userPostRepository;
     }
 
@@ -28,8 +31,9 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
+     * Service method of deletion user post
      * @param userPost
-     * @return
+     * @return userPost
      */
     @Override
     public UserPost update(UserPost userPost) {
@@ -41,7 +45,7 @@ public class PostServiceImpl implements PostService {
      */
     @Override
     public void delete(UserPost userPost) {
-
+        userPostRepository.delete(userPost);
     }
 
     /**
@@ -49,7 +53,7 @@ public class PostServiceImpl implements PostService {
      * @return
      */
     @Override
-    public UserPost findById(Long id) {
+    public UserPost findById(UUID id) {
         return null;
     }
 

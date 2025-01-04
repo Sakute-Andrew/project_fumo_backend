@@ -4,8 +4,9 @@ import com.sakute.project_fumo_backend.domain.Service;
 import com.sakute.project_fumo_backend.domain.enteties.UserPost;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface PostService extends Service<UserPost> {
+public interface PostService extends Service<UserPost, UUID> {
     /**
      * @param userPost
      * @return
@@ -31,7 +32,7 @@ public interface PostService extends Service<UserPost> {
      * @return
      */
     @Override
-    UserPost findById(Long id);
+    UserPost findById(UUID id);
 
     /**
      * @return

@@ -4,8 +4,9 @@ import com.sakute.project_fumo_backend.domain.Service;
 import com.sakute.project_fumo_backend.domain.enteties.Orders;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface OrdersService extends Service<Orders> {
+public interface OrdersService extends Service<Orders, Long> {
     /**
      * @param orders
      * @return

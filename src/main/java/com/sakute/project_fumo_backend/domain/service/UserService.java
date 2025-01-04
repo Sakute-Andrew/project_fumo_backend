@@ -4,7 +4,7 @@ import com.sakute.project_fumo_backend.domain.Service;
 import com.sakute.project_fumo_backend.domain.enteties.User;
 
 
-public interface UserService extends Service<User> {
+public interface UserService extends Service<User, Long> {
 
     /**
      * @param user

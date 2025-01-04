@@ -12,7 +12,7 @@ import java.util.UUID;
 public class UserPost {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_post_id")
     private UUID userPostId;
 
