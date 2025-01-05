@@ -2,7 +2,6 @@ package com.sakute.project_fumo_backend.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,6 @@ public abstract class ServiceGeneric<T, ID> implements Service<T, ID> {
 
     @Override
     public T update(T t) {
-        // Реалізація може залежати від логіки, наприклад, перевірка існування
         return repository.save(t);
     }
 

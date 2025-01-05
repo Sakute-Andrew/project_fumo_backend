@@ -2,9 +2,7 @@ package com.sakute.project_fumo_backend.domain;
 
 import java.util.List;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
-@org.springframework.stereotype.Service
 public interface Service<T, ID>  {
     T save (T t);
     T update (T t);

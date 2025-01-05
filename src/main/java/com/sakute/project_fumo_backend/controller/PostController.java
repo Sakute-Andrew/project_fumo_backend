@@ -2,6 +2,7 @@ package com.sakute.project_fumo_backend.controller;
 
 import com.sakute.project_fumo_backend.domain.enteties.UserPost;
 import com.sakute.project_fumo_backend.domain.service.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,18 +13,16 @@ public class PostController {
 
     private final PostService postService;
 
+    @Autowired
     public PostController(PostService postService) {
-
         this.postService = postService;
     }
     @GetMapping("/posts?q={query}")
     public ResponseEntity<?> getPostByName(@RequestParam String query) {
-
         return null;
     }
     @PostMapping("/save-post")
     public ResponseEntity<?> savePost(UserPost post) {
-
         return null;
     }
     @GetMapping("/explore-posts")
