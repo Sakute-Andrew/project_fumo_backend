@@ -1,4 +1,4 @@
-<div align="center"><img src="src/main/resources/img/Logo%20Full.svg"></div>
+<div align="center"><img src="src/main/resources/static/img/Logo%20Full.svg"></div>
 
 <h1 align="center">Fresh ideas. For engineers, artist, everybody</h1>
 

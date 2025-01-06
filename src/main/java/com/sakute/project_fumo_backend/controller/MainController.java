@@ -1,13 +1,13 @@
 package com.sakute.project_fumo_backend.controller;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 public class MainController {
 
     @RequestMapping("/hello")
     public String index() {
-        return "static/hello.html";
+        return "index.html";
     }
 }
