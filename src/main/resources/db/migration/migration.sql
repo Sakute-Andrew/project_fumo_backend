@@ -299,7 +299,7 @@ ALTER TABLE reporting
     OWNER TO postgres;
 
 CREATE TABLE IF NOT EXISTS donations (
-                                         donation_id    uuid NOT NULL
+                                         donation_id    Bigint NOT NULL
                                              CONSTRAINT donations_pk
                                                  PRIMARY KEY,
                                          fundraising_id uuid NOT NULL

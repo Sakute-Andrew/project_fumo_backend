@@ -20,6 +20,4 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
         this.userPostRepository = userPostRepository;
     }
 
-
-
 }

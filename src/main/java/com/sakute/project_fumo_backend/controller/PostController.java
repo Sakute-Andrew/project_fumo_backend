@@ -17,24 +17,32 @@ public class PostController {
     public PostController(PostService postService) {
         this.postService = postService;
     }
+
     @GetMapping("/posts?q={query}")
     public ResponseEntity<?> getPostByName(@RequestParam String query) {
         return null;
     }
+
     @PostMapping("/save-post")
     public ResponseEntity<?> savePost(UserPost post) {
         return null;
     }
+
     @GetMapping("/explore-posts")
     public ResponseEntity<List<?>> getAllPosts() {
-         return ResponseEntity.ok(postService.findAll());
+        return ResponseEntity.ok(postService.findAll());
     }
-    @PostMapping
+
+    @PostMapping("/create-post")
     public ResponseEntity<?> createPost(@RequestBody UserPost post) {
         return ResponseEntity.ok(postService.save(post));}
 
     @PostMapping("/delete-post")
     public void deletePost(@RequestParam UserPost post) {
         postService.delete(post);
+    }
+    @GetMapping("/post")
+    public ResponseEntity<?> getCommentsbyPostId(@RequestParam Long postId) {
+        return null;
     }
 }

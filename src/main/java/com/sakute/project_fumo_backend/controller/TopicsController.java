@@ -10,6 +10,7 @@ import java.util.List;
 @RestController
 public class TopicsController {
 
+
     @GetMapping("/topics?q={query}")
     public ResponseEntity<List<?>> getTopicsByName(@RequestParam String query) {
         return null;

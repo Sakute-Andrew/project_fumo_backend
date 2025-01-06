@@ -19,7 +19,7 @@ public class Donations {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "donation_id")
-    private UUID id;
+    private Long id;
 
     @Column(name = "fundraising_id", nullable = false)
     private UUID fundraisingId;
