@@ -1,10 +1,10 @@
 package com.sakute.project_fumo_backend.repository.jpa_repo;
 
 import com.sakute.project_fumo_backend.domain.enteties.IntellectualProperty;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.sakute.project_fumo_backend.repository.RepositoryFactory;
 
 import java.util.UUID;
 
-public interface IntellectualPropertyRepository  extends JpaRepository<IntellectualProperty, UUID> {
+public interface IntellectualPropertyRepository  extends RepositoryFactory<IntellectualProperty, UUID> {
 
 }

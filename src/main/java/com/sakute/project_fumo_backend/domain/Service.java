@@ -8,6 +8,7 @@ public interface Service<T, ID>  {
     T update (T t);
     void delete (T t);
     T findById (ID id);
+    T findByName (String name);
     List<T> findAll();
     List<T> findAllByQuery(String query);
     List<T> findAllByQuery(String query, int page, int size);

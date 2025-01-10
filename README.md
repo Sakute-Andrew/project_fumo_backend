@@ -26,9 +26,12 @@ This project was developed using the following technologies and tools:
 - **Docker** – Used for application containerization.
 - **Postman** – API testing tools.
 
+<tr/>
 
 
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT), which allows you to freely use, modify, and distribute the code under certain conditions.
+
+
 
 
 

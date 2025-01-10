@@ -2,47 +2,53 @@ package com.sakute.project_fumo_backend.controller;
 
 import com.sakute.project_fumo_backend.domain.enteties.UserPost;
 import com.sakute.project_fumo_backend.domain.service.PostService;
+import com.sakute.project_fumo_backend.domain.service.impl.CommentServiceImpl;
+import com.sakute.project_fumo_backend.domain.service.impl.PostServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
+@RequestMapping("/posts")
 public class PostController {
 
-    private final PostService postService;
+    private final PostServiceImpl postService;
+
+    private final CommentServiceImpl commentService;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostServiceImpl postService, CommentServiceImpl commentService) {
         this.postService = postService;
+        this.commentService = commentService;
     }
 
-    @GetMapping("/posts?q={query}")
-    public ResponseEntity<?> getPostByName(@RequestParam String query) {
-        return null;
+    @GetMapping
+    public ResponseEntity<?> getPostByName(@RequestParam String q) {
+        return ResponseEntity.ok(postService.findByName(q));
     }
 
-    @PostMapping("/save-post")
-    public ResponseEntity<?> savePost(UserPost post) {
-        return null;
+    @PostMapping
+    public ResponseEntity<?> createPost(@Valid @RequestBody UserPost post) {
+        return ResponseEntity.ok(postService.save(post));
     }
 
-    @GetMapping("/explore-posts")
-    public ResponseEntity<List<?>> getAllPosts() {
+    @GetMapping("/explore")
+    public ResponseEntity<List<UserPost>> getAllPosts() {
         return ResponseEntity.ok(postService.findAll());
     }
 
-    @PostMapping("/create-post")
-    public ResponseEntity<?> createPost(@RequestBody UserPost post) {
-        return ResponseEntity.ok(postService.save(post));}
-
-    @PostMapping("/delete-post")
-    public void deletePost(@RequestParam UserPost post) {
-        postService.delete(post);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable UUID id) {
+        postService.deleteById(id);
+        return ResponseEntity.ok().build();
     }
-    @GetMapping("/post")
-    public ResponseEntity<?> getCommentsbyPostId(@RequestParam Long postId) {
-        return null;
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<?> getCommentsByPostId(@PathVariable Long id) {
+        return ResponseEntity.ok(commentService.findById(id));
     }
 }

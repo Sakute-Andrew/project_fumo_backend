@@ -2,13 +2,13 @@ package com.sakute.project_fumo_backend.repository.jpa_repo;
 
 import com.sakute.project_fumo_backend.domain.enteties.Fundraising;
 import com.sakute.project_fumo_backend.domain.enteties.User;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.sakute.project_fumo_backend.repository.RepositoryFactory;
 
 import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface FundraisingRepository  extends JpaRepository<Fundraising, UUID> {
+public interface FundraisingRepository  extends RepositoryFactory<Fundraising, UUID> {
     Optional<Fundraising> findFundraisingById(UUID fundraisingId);
     Optional<Fundraising> findByUserId(User userId);
     Optional<Fundraising> findFundraisingByCategory(Long categoryId);
