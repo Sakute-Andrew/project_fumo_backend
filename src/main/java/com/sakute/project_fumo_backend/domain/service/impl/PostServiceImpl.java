@@ -7,6 +7,7 @@ import com.sakute.project_fumo_backend.repository.jpa_repo.UserPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,4 +21,8 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
         this.userPostRepository = userPostRepository;
     }
 
+    @Override
+    public Optional<UserPost> findByTitle(String title) {
+        return userPostRepository.findUserPostByPostHeader(title);
+    }
 }

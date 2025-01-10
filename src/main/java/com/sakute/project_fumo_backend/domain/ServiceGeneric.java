@@ -1,6 +1,7 @@
 package com.sakute.project_fumo_backend.domain;
 
 import com.sakute.project_fumo_backend.repository.RepositoryFactory;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,9 +15,9 @@ public abstract class ServiceGeneric<T, ID> implements Service<T, ID> {
     // which provides built-in methods for common database operations like save(), findById(), delete(), and more.
     // This allows for easy integration with the persistence layer without the need to implement basic CRUD operations manually.
 
-    protected final RepositoryFactory<T, ID> repository;
+    protected final JpaRepository<T, ID> repository;
 
-    protected ServiceGeneric(RepositoryFactory<T, ID> repository) {
+    protected ServiceGeneric(JpaRepository<T, ID> repository) {
         this.repository = repository;
     }
 
@@ -43,11 +44,6 @@ public abstract class ServiceGeneric<T, ID> implements Service<T, ID> {
     public T findById(ID id) {
         Optional<T> entity = repository.findById(id);
         return entity.orElse(null);
-    }
-
-    @Override
-    public T findByName(String name) {
-        return repository.findByName(name).orElse(null);
     }
 
     @Override
