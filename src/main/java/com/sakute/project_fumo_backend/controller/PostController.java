@@ -27,7 +27,8 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getPostByName(@RequestParam String q) {
+    public ResponseEntity<?> getPostByName(
+            @RequestParam(value = "name", required = false) String q) {
         return ResponseEntity.ok(postService.findByTitle(q));
     }
 
