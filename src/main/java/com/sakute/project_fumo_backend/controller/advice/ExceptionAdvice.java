@@ -11,10 +11,10 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.Date;
 
 @ControllerAdvice
-public class ExeptionAdvice {
+public class ExceptionAdvice {
 
     @ExceptionHandler(NotFoundExeption.class)
-    public ResponseEntity<Error> handleNotFoundExeption(NotFoundExeption exeption, WebRequest request) {
+    public ResponseEntity<Error> handleNotFoundException(NotFoundExeption exeption, WebRequest request) {
         Error error = new Error();
         error.errorBuilder(HttpStatus.NOT_FOUND.value(), exeption.getMessage(), new Date());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);

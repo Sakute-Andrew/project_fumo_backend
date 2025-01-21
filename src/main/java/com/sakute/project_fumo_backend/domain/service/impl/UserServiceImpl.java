@@ -7,6 +7,7 @@ import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -18,5 +19,10 @@ public class UserServiceImpl extends ServiceGeneric<User, UUID> implements UserS
     public UserServiceImpl(UserRepository userRepository) {
         super(userRepository);
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public Optional<User> findByName(String name) {
+        return userRepository.findUserByUsername(name);
     }
 }

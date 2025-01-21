@@ -2,7 +2,6 @@ package com.sakute.project_fumo_backend.domain;
 
 import java.util.List;
 
-
 public interface Service<T, ID>  {
     T save (T t);
     T update (T t);
