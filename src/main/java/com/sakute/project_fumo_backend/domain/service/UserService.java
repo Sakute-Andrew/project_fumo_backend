@@ -1,14 +1,18 @@
 package com.sakute.project_fumo_backend.domain.service;
 
 import com.sakute.project_fumo_backend.domain.Service;
-import com.sakute.project_fumo_backend.domain.enteties.User;
+import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 
 public interface UserService extends Service<User, UUID> {
 
-    Optional<User> findByName(String name);
+    ResponseEntity<List<User>> findByName(String name);
+
+    ResponseEntity<List<User>> findAllUsers();
 
 }

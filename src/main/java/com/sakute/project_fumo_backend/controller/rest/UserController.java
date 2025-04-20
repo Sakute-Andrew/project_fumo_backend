@@ -1,13 +1,18 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
+import com.sakute.project_fumo_backend.controller.exeption.NotFoundExeption;
+import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import com.sakute.project_fumo_backend.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNullApi;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
-@RestController("/users")
+@RestController
+@RequestMapping("api/v1/user")
 public class UserController {
 
     private UserService userService;
@@ -17,9 +22,14 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/")
+    public ResponseEntity<List<User>> getUserList() throws NotFoundExeption {
+        return userService.findAllUsers();
+    }
+
     @GetMapping("/{userName}")
-    public ResponseEntity<?> getUserByName(@RequestParam(value = "userName") String userName) {
-        return ResponseEntity.ok(userService.findByName(userName));
+    public ResponseEntity<?> getUserByName(@PathVariable(value = "userName") String userName) throws NotFoundExeption {
+        return userService.findByName(userName);
     }
 
     @PostMapping("/register")

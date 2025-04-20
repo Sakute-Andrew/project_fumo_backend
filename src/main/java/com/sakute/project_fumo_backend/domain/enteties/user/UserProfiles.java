@@ -1,4 +1,4 @@
-package com.sakute.project_fumo_backend.domain.enteties;
+package com.sakute.project_fumo_backend.domain.enteties.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,7 +15,7 @@ public class UserProfiles {
 
     @Column(name = "bio")
     private String bio;
-
+    //TODO rewrite to table as tag
     @Column(name = "areas_of_expertise")
     private String areasOfExpertise;
 

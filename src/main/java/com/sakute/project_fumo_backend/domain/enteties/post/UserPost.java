@@ -1,5 +1,6 @@
-package com.sakute.project_fumo_backend.domain.enteties;
+package com.sakute.project_fumo_backend.domain.enteties.post;
 
+import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class UserPost {
     @JoinColumn(name = "user_id", insertable = false, updatable = false, referencedColumnName = "user_id")
     private User userId;
 
+
     @Column(name = "photo")
     private byte[] photo;
 
@@ -29,10 +31,10 @@ public class UserPost {
     @Column(name = "post_description")
     private String postDescription;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @Column(name = "modified_at", nullable = false)
+    @Column(name = "modified_at")
     private Timestamp modifiedAt;
 
     @Column(name = "post_topic")

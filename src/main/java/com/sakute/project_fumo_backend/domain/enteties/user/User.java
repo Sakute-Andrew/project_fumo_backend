@@ -1,7 +1,9 @@
-package com.sakute.project_fumo_backend.domain.enteties;
+package com.sakute.project_fumo_backend.domain.enteties.user;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -9,6 +11,8 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "user_t")
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -25,10 +29,10 @@ public class User {
     @JoinColumn(name = "user_role", insertable = false, updatable = false)
     private Long userRole;
 
-    @Column(name = "last_login_datetime", nullable = false)
+    @Column(name = "last_login_datetime")
     private Timestamp lastLoginDatetime;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     private Timestamp createdAt;
 
 }

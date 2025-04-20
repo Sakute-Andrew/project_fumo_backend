@@ -1,5 +1,6 @@
 package com.sakute.project_fumo_backend.domain.enteties;
 
+import com.sakute.project_fumo_backend.domain.enteties.intprop.IntellectualProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 

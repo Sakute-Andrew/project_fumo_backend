@@ -1,5 +1,7 @@
 package com.sakute.project_fumo_backend.domain.enteties;
 
+import com.sakute.project_fumo_backend.domain.enteties.fundraising.Fundraising;
+import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

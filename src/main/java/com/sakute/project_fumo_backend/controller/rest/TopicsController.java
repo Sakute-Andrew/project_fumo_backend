@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("api/v1/topics")
+@RestController
+@RequestMapping("api/v1/topics")
 public class TopicsController {
 
 

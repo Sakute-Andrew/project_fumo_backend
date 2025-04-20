@@ -1,6 +1,6 @@
-package com.sakute.project_fumo_backend.domain.enteties;
+package com.sakute.project_fumo_backend.domain.enteties.intprop;
 
-
+import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -9,13 +9,13 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "intellectual_property_likes")
-public class IntellectualPropertyLikes {
+@Table(name = "intellectual_property_comments")
+public class IntellectualPropertyComments {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_id")
-    private Long likeId;
+    @Column(name = "comment_id")
+    private Long commentId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
@@ -23,6 +23,9 @@ public class IntellectualPropertyLikes {
 
     @Column(name = "ip_id", nullable = false)
     private UUID ipId;
+
+    @Column(name = "content", nullable = false)
+    private String content;
 
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
@@ -33,4 +36,3 @@ public class IntellectualPropertyLikes {
 
     // Додаткові конструктори, гетери та сетери можна додати за потребою
 }
-

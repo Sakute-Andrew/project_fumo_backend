@@ -1,4 +1,4 @@
-package com.sakute.project_fumo_backend.domain.enteties;
+package com.sakute.project_fumo_backend.domain.enteties.user;
 
 
 import jakarta.persistence.*;

@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@RestController("api/v1/orders")
+@RestController
+@RequestMapping("api/v1/orders")
 public class OrdersController {
 
     @PostMapping("/create")

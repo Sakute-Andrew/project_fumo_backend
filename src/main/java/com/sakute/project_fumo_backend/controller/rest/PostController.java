@@ -2,7 +2,7 @@ package com.sakute.project_fumo_backend.controller.rest;
 
 import com.sakute.project_fumo_backend.controller.exeption.InvalidInputException;
 import com.sakute.project_fumo_backend.controller.exeption.NotFoundExeption;
-import com.sakute.project_fumo_backend.domain.enteties.UserPost;
+import com.sakute.project_fumo_backend.domain.enteties.post.UserPost;
 import com.sakute.project_fumo_backend.domain.service.impl.CommentServiceImpl;
 import com.sakute.project_fumo_backend.domain.service.impl.PostServiceImpl;
 import jakarta.validation.Valid;
@@ -18,7 +18,6 @@ import java.util.UUID;
 public class PostController {
 
     private final PostServiceImpl postService;
-
     private final CommentServiceImpl commentService;
 
     @Autowired
@@ -29,7 +28,7 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<?> getPostByName(
-            @RequestParam(value = "name", required = false) String name) throws NotFoundExeption, InvalidInputException {
+            @RequestParam(value = "name", required = false) String name) throws NotFoundExeption {
         postService.findByTitle(name);
         return ResponseEntity.ok(postService.findByTitle(name));
 

@@ -1,6 +1,7 @@
-package com.sakute.project_fumo_backend.domain.enteties;
+package com.sakute.project_fumo_backend.domain.enteties.intprop;
 
 
+import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,6 +25,7 @@ public class IntellectualProperty {
     @Column(name = "description")
     private String description;
 
+    // TODO rewrite type id to collectibles like Enum
     @Column(name = "type_ip", nullable = false)
     private String typeIp;
 
@@ -36,11 +38,8 @@ public class IntellectualProperty {
     @Column(name = "price", scale = 2)
     private BigDecimal price;
 
-    @Column(name = "category_id", nullable = false)
-    private Long category;
-
     @Column(name = "file_ip")
-    private byte[] fileIp;
+    private String fileIp;
 
     @Column(name = "status", nullable = false)
     private String status;

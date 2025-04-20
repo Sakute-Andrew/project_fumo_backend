@@ -1,5 +1,7 @@
 package com.sakute.project_fumo_backend.domain.enteties;
 
+import com.sakute.project_fumo_backend.domain.enteties.intprop.IntellectualProperty;
+import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -32,6 +34,9 @@ public class Orders {
     @Column(name = "order_status", nullable = false)
     private String orderStatus;
 
+    @Column(name = "message")
+    private String message;
+
     @ManyToOne
     @JoinColumn(name = "customer_id", insertable = false, updatable = false)
     private User customer;
@@ -40,5 +45,4 @@ public class Orders {
     @JoinColumn(name = "ip_id", insertable = false, updatable = false)
     private IntellectualProperty intellectualProperty;
 
-    // Додаткові конструктори, гетери та сетери можна додати за потребою
 }

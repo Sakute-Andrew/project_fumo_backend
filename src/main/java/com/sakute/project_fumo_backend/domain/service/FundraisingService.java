@@ -1,7 +1,9 @@
 package com.sakute.project_fumo_backend.domain.service;
 
 import com.sakute.project_fumo_backend.domain.Service;
-import com.sakute.project_fumo_backend.domain.enteties.Fundraising;
+import com.sakute.project_fumo_backend.domain.enteties.fundraising.Fundraising;
 
-public interface FundraisingService extends Service<Fundraising, Long> {
+import java.util.UUID;
+
+public interface FundraisingService extends Service<Fundraising, UUID> {
 }

@@ -1,11 +1,10 @@
 package com.sakute.project_fumo_backend.domain.service.dto;
 
-import com.sakute.project_fumo_backend.domain.enteties.Role;
+import com.sakute.project_fumo_backend.domain.enteties.user.Role;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
 @Builder
 public class UserDto {
