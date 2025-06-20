@@ -4,12 +4,12 @@ import com.sakute.project_fumo_backend.domain.enteties.Comment;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface CommentRepository extends JpaRepository<Comment, Long>{
-    Optional<Comment> findByCommentId(Long postId);
-    Optional<Comment> findByCommentIdAndUserId(Long postId, User userId);
-    Optional<Comment> findByUserId(User userId);
-    Optional<Comment> findCommentByUserPostId(UUID userPostId);
+    List<Comment> findByUserId(User userId);
+    List<Comment> findByUserPostId(UUID postId);
+    boolean deleteByUserPostIdAndCommentId(UUID userPostId, Long commentId);
 }

@@ -5,7 +5,6 @@ import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -25,24 +24,17 @@ public class IntellectualProperty {
     @Column(name = "description")
     private String description;
 
-    // TODO rewrite type id to collectibles like Enum
     @Column(name = "type_ip", nullable = false)
     private String typeIp;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID ownerId;
-
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
-
-    @Column(name = "price", scale = 2)
-    private BigDecimal price;
 
     @Column(name = "file_ip")
     private String fileIp;
 
     @Column(name = "status", nullable = false)
-    private String status;
+    private IpStatus status;
 
     @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)

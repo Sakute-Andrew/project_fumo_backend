@@ -20,7 +20,7 @@ public class UserProfiles {
     private String areasOfExpertise;
 
     @Column(name = "profile_picture")
-    private byte[] profilePicture;
+    private String profilePicture;
 
     @Column(name = "website")
     private String website;
@@ -32,6 +32,5 @@ public class UserProfiles {
     @JoinColumn(name = "user_id")
     private User userId;
 
-    // Додаткові конструктори, гетери та сетери можна додати за потребою
 }
 

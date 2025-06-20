@@ -4,6 +4,7 @@ import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
+
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -16,12 +17,6 @@ public class UserPostLike {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id")
     private Long likeId;
-
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
-
-    @Column(name = "user_post_id", nullable = false)
-    private UUID userPostId;
 
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;

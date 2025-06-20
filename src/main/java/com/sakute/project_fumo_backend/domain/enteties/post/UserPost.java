@@ -2,6 +2,7 @@ package com.sakute.project_fumo_backend.domain.enteties.post;
 
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -17,31 +18,28 @@ public class UserPost {
     @Column(name = "user_post_id")
     private UUID userPostId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false, referencedColumnName = "user_id")
-    private User userId;
-
-
-    @Column(name = "photo")
-    private byte[] photo;
-
     @Column(name = "post_header", nullable = false, length = 300)
     private String postHeader;
 
     @Column(name = "post_description")
     private String postDescription;
 
+    @Column(name = "post_text")
+    private String postText;
+
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @Column(name = "modified_at")
-    private Timestamp modifiedAt;
-
-    @Column(name = "post_topic")
-    private Long postTopic;
     @ManyToOne
     @JoinColumn(name = "post_topic", insertable = false, updatable = false)
     private PostTagTopic postTagTopic;
+
+    @Column(name = "photo")
+    private String photo;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false, referencedColumnName = "user_id")
+    private User userId;
 
     // Додаткові конструктори, гетери та сетери можна додати за потребою
 }
