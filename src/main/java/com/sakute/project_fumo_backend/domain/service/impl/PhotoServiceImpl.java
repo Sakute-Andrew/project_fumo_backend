@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,13 +33,13 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public String uploadUserPhoto(MultipartFile file, UUID userId) throws IOException {
-        String userDir = userPhotoPath + userId.toString();
+        String userDir = userPhotoPath;
         return uploadFile(file, userDir);
     }
 
     @Override
-    public String uploadPostPhoto(MultipartFile file, UUID postId) throws IOException {
-        String postDir = postPhotoPath + postId.toString();
+    public String uploadPostPhoto(MultipartFile file, String filename) throws IOException {
+        String postDir = postPhotoPath;
         return uploadFile(file, postDir);
     }
 
@@ -48,7 +49,7 @@ public class PhotoServiceImpl implements PhotoService {
         Path dirPath = Paths.get(directory);
         Files.createDirectories(dirPath);
 
-        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+        String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         String extension = "";
 
         int dotIndex = originalFilename.lastIndexOf('.');

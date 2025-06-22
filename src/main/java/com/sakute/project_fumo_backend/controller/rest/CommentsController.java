@@ -41,6 +41,11 @@ public class CommentsController {
 
     }
 
+    @GetMapping("/comments/list")
+    public ResponseEntity<?> findAllComments() {
+        return ResponseEntity.ok(commentService.findAll());
+    }
+
     @DeleteMapping("/{postId}/comments/{id}")
     @PreAuthorize("hasRole('ADMIN') or @commentServiceImpl.isCommentAuthor(#id, authentication.name)")
     public ResponseEntity<?> deleteComment(@PathVariable UUID postId,@PathVariable Long id) {

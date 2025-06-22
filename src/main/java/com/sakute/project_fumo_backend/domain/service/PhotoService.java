@@ -8,6 +8,6 @@ import java.util.UUID;
 public interface PhotoService {
 
      String uploadUserPhoto(MultipartFile file, UUID userId) throws IOException;
-     String uploadPostPhoto(MultipartFile file, UUID postId) throws IOException;
+     String uploadPostPhoto(MultipartFile file, String fileName) throws IOException;
      byte[] downloadImageFromFileSystem(String fileName) throws IOException;
 }

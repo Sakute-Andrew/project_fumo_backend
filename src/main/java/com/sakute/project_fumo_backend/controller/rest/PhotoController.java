@@ -1,6 +1,7 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
 import com.sakute.project_fumo_backend.domain.service.PhotoService;
+import com.sakute.project_fumo_backend.domain.service.impl.PhotoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,17 +17,17 @@ import java.util.UUID;
 @RequestMapping("api/v1/photo")
 public class PhotoController {
 
-    private PhotoService photoService;
+    private PhotoServiceImpl photoService;
 
     @Autowired
-    public PhotoController(PhotoService photoService) {
-        photoService = this.photoService;
+    public PhotoController(PhotoServiceImpl photoService) {
+        this.photoService = photoService;
     }
 
     @PostMapping("/upload")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> uploadImageToFileSystem(@RequestParam("image")MultipartFile file, UUID userId) throws IOException {
-        String uploadImage = photoService.uploadPostPhoto(file, userId);
+    public ResponseEntity<?> uploadImageToFileSystem(@RequestParam("file")MultipartFile file) throws IOException {
+        String uploadImage = photoService.uploadPostPhoto(file, file.getOriginalFilename());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(uploadImage);
     }

@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/")
+    @GetMapping("/list")
     public ResponseEntity<List<User>> getUserList() throws NotFoundExeption {
         return userService.findAllUsers();
     }
@@ -31,6 +31,11 @@ public class UserController {
     @GetMapping("/{userName}")
     public ResponseEntity<?> getUserByName(@PathVariable(value = "userName") String userName) throws NotFoundExeption {
         return userService.findUserpage(userName);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteUserById(@PathVariable(value = "userName") String userName) throws NotFoundExeption {
+        return null;
     }
 
 }

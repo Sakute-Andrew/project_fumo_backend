@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -142,14 +143,18 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
     }
 
     // Збереження нового поста
-    @Override
-    public UserPost save(UserPost post) {
-        // Встановлюємо часові мітки
+    public boolean savePost(UserPostDto userPostpost) {
+
+        UserPost userPost = postMapper.toEntity(userPostpost);
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        post.setCreatedAt(now);
+        userPost.setCreatedAt(now);
+        try {
+            postRepository.save(userPost);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
 
-
-        return postRepository.save(post);
     }
 
 }
