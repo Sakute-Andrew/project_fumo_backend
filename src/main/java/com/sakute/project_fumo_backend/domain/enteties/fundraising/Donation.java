@@ -1,5 +1,6 @@
 package com.sakute.project_fumo_backend.domain.enteties.fundraising;
 
+import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,17 +24,15 @@ public class Donation {
     private UUID fundraisingId;
 
     @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false, referencedColumnName = "user_id")
+    private User userId;
+
+    @ManyToOne
     @JoinColumn(name = "fundraising_id", insertable = false, updatable = false)
     private Fundraising fundraising;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
-
-    @Column(name = "donor_name")
-    private String donorName;
-
-    @Column(name = "donor_email")
-    private String donorEmail;
 
     @Column(name = "transaction_id")
     private String transactionId;

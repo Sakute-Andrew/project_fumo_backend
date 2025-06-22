@@ -58,4 +58,9 @@ public class DonationController {
          List<DonorDisplayDto> topDonors = donationService.getDonors(fundraisingId);
         return ResponseEntity.ok(topDonors);
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<DonationResponse> deleteDonation(@PathVariable UUID donationId) {
+        return null;
+    }
 }

@@ -8,8 +8,7 @@ import java.util.UUID;
 public class DonationRequest {
     private UUID fundraisingId;
     private BigDecimal amount;
-    private String donorName;
-    private String donorEmail;
+    private UUID userId;
     private Boolean isAnonymous = false;
 }
 

@@ -1,7 +1,6 @@
-package com.sakute.project_fumo_backend.repository;
+package com.sakute.project_fumo_backend.repository.jpa_repo.fundraising;
 
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.Donation;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

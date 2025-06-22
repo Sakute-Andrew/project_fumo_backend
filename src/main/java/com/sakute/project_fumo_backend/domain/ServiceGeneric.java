@@ -1,6 +1,5 @@
 package com.sakute.project_fumo_backend.domain;
 
-import com.sakute.project_fumo_backend.repository.RepositoryFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

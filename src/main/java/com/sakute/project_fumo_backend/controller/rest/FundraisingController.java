@@ -3,11 +3,13 @@ package com.sakute.project_fumo_backend.controller.rest;
 import com.sakute.project_fumo_backend.domain.enteties.dto.FundraisingDto;
 import com.sakute.project_fumo_backend.domain.enteties.dto.FundraisingListDto;
 import com.sakute.project_fumo_backend.domain.service.impl.FundraisingService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,6 +80,54 @@ public class FundraisingController {
         Page<FundraisingListDto> fundraisings = fundraisingService.getEndingSoonFundraisings(pageable);
 
         return ResponseEntity.ok(fundraisings);
+    }
+
+
+    @PostMapping
+    public ResponseEntity<FundraisingDto> createFundraising(@Valid @RequestBody FundraisingDto createDto) {
+        try {
+            FundraisingDto createdFundraising = fundraisingService.createFundraising(createDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdFundraising);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // Оновлення існуючого фандрейзингу
+    @PutMapping("/{id}")
+    public ResponseEntity<FundraisingDto> updateFundraising(
+            @PathVariable UUID id,
+            @Valid @RequestBody FundraisingDto updateDto) {
+        try {
+            FundraisingDto updatedFundraising = fundraisingService.updateFundraising(id, updateDto);
+            return ResponseEntity.ok(updatedFundraising);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Видалення фандрейзингу
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFundraising(@PathVariable UUID id) {
+        try {
+            fundraisingService.deleteFundraising(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Часткове оновлення фандрейзингу (PATCH)
+    @PatchMapping("/{id}")
+    public ResponseEntity<FundraisingDto> partialUpdateFundraising(
+            @PathVariable UUID id,
+            @RequestBody FundraisingDto updateDto) {
+        try {
+            FundraisingDto updatedFundraising = fundraisingService.partialUpdateFundraising(id, updateDto);
+            return ResponseEntity.ok(updatedFundraising);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     private Pageable createPageable(int page, int size, String sortBy) {

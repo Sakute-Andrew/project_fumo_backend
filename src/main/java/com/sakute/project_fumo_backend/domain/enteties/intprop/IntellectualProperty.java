@@ -33,6 +33,7 @@ public class IntellectualProperty {
     @Column(name = "file_ip")
     private String fileIp;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private IpStatus status;
 

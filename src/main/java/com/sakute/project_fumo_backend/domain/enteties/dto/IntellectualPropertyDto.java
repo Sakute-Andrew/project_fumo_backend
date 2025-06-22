@@ -26,7 +26,7 @@ public class IntellectualPropertyDto {
     private String typeIp;
 
     @NotNull
-    private AuthUserDto ownerId;
+    private String userFullname;
 
     @NotNull
     private Timestamp createdAt;

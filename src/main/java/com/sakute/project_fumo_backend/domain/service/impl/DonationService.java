@@ -1,16 +1,17 @@
 package com.sakute.project_fumo_backend.domain.service.impl;
 
 
-import com.sakute.project_fumo_backend.domain.enteties.dto.UserDto;
+import com.sakute.project_fumo_backend.controller.exeption.NotFoundExeption;
 import com.sakute.project_fumo_backend.domain.enteties.dto.donation.DonationRequest;
 import com.sakute.project_fumo_backend.domain.enteties.dto.donation.DonationResponse;
 import com.sakute.project_fumo_backend.domain.enteties.dto.donation.DonationStatsDto;
 import com.sakute.project_fumo_backend.domain.enteties.dto.donation.DonorDisplayDto;
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.*;
-import com.sakute.project_fumo_backend.repository.DonationRepository;
+import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.repository.jpa_repo.fundraising.DonationRepository;
+import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.fundraising.FundraisingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,6 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class DonationService {
@@ -29,6 +29,9 @@ public class DonationService {
 
     @Autowired
     private FundraisingRepository fundraisingRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional
     public DonationResponse processMockDonation(DonationRequest request) {
@@ -51,6 +54,8 @@ public class DonationService {
                 return new DonationResponse(false, "Термін збору коштів завершено", null);
             }
 
+            User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new NotFoundExeption("User Not Found"));
+
             // Імітація обробки платежу
             Thread.sleep(1500); // Імітація затримки платіжної системи
 
@@ -58,8 +63,7 @@ public class DonationService {
             Donation donation = new Donation();
             donation.setFundraisingId(request.getFundraisingId());
             donation.setAmount(request.getAmount());
-            donation.setDonorName(request.getDonorName());
-            donation.setDonorEmail(request.getDonorEmail());
+            donation.setUserId(user);
             donation.setTransactionId("MOCK_" + System.currentTimeMillis());
             donation.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             donation.setIsAnonymous(request.getIsAnonymous());
@@ -109,9 +113,9 @@ public class DonationService {
     }
 
     private DonorDisplayDto mapToDonorDisplay(Donation donation) {
-        String displayName = donation.getIsAnonymous() || donation.getDonorName() == null
+        String displayName = donation.getIsAnonymous() || donation.getUserId().getFullName() == null
                 ? "Анонім"
-                : maskName(donation.getDonorName());
+                : maskName(donation.getUserId().getFullName());
 
         return new DonorDisplayDto(
                 displayName,
