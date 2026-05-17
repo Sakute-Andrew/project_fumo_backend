@@ -2,6 +2,7 @@ package com.sakute.project_fumo_backend.domain.enteties.fundraising;
 
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "donations")
 public class Donation {
@@ -19,17 +21,6 @@ public class Donation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "donation_id")
     private UUID id;
-
-    @Column(name = "fundraising_id", nullable = false)
-    private UUID fundraisingId;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false, referencedColumnName = "user_id")
-    private User userId;
-
-    @ManyToOne
-    @JoinColumn(name = "fundraising_id", insertable = false, updatable = false)
-    private Fundraising fundraising;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
@@ -41,5 +32,13 @@ public class Donation {
     private Timestamp createdAt;
 
     @Column(name = "is_anonymous", nullable = false)
-    private Boolean isAnonymous = false;
+    private Boolean isAnonymous;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User donor;  // назва відображає роль
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fundraising_id", nullable = false)
+    private Fundraising fundraising;
 }

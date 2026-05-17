@@ -1,7 +1,9 @@
 package com.sakute.project_fumo_backend.repository.jpa_repo;
 
+import com.sakute.project_fumo_backend.domain.enteties.post.UserPost;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByUsername(String username);
 
 
-
-
+    boolean deleteByEmail(String email);
 }

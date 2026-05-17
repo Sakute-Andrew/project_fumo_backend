@@ -1,26 +1,31 @@
 package com.sakute.project_fumo_backend.domain.enteties.user;
 
 import jakarta.persistence.*;
-
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
-
 @Entity
-@Data
+@Getter
+@Setter // Замінили @Data на безпечні Getter/Setter
 @Table(name = "user_settings")
 public class UserSettings {
 
     @Id
-    @Column(name = "user_settings_id")
-    private UUID userId;
+    @Column(name = "user_id")
+    private UUID id; // Перейменували на id, щоб не плутатися
 
-    @Column(name = "email_notifications", nullable = false, columnDefinition = "boolean default true")
-    private boolean emailNotifications;
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId // 🔑 Це каже Hibernate: використовуй ID юзера як ID для налаштувань
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "marketing_opt_in", nullable = false, columnDefinition = "boolean default false")
-    private boolean marketingOptIn;
+    @Column(name = "email_notifications", nullable = false)
+    private boolean emailNotifications = true; // ✅ Правильне встановлення дефолту
+
+    @Column(name = "marketing_opt_in", nullable = false)
+    private boolean marketingOptIn = false;
 
     @Column(name = "language", length = 50)
     private String language;
@@ -33,11 +38,4 @@ public class UserSettings {
 
     @Column(name = "accessibility_options", columnDefinition = "text")
     private String accessibilityOptions;
-
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    // Додаткові конструктори, гетери та сетери можна додати за потребою
 }
-

@@ -17,14 +17,14 @@ import java.util.UUID;
 @RequestMapping("api/v1/photo")
 public class PhotoController {
 
-    private PhotoServiceImpl photoService;
+    private final PhotoServiceImpl photoService;
 
     @Autowired
     public PhotoController(PhotoServiceImpl photoService) {
         this.photoService = photoService;
     }
 
-    @PostMapping("/upload")
+    @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> uploadImageToFileSystem(@RequestParam("file")MultipartFile file) throws IOException {
         String uploadImage = photoService.uploadPostPhoto(file, file.getOriginalFilename());
@@ -32,7 +32,7 @@ public class PhotoController {
                 .body(uploadImage);
     }
 
-    @GetMapping("/download/{fileName}")
+    @GetMapping("/{fileName}")
     public ResponseEntity<?> downloadImageFromFileSystem(@PathVariable String fileName) throws IOException {
         byte[] imageData = photoService.downloadImageFromFileSystem(fileName);
         return ResponseEntity.status(HttpStatus.OK)

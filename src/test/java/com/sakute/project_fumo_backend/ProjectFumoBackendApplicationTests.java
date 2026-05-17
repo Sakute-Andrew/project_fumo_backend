@@ -57,7 +57,6 @@ class FundraisingDataCreationTest {
 
             // Поточна сума (від 10% до 80% від цільової)
             BigDecimal currentAmount = goalAmount.multiply(new BigDecimal("0.1").add(new BigDecimal(Math.random() * 0.7)));
-            fundraising.setCurrentAmount(currentAmount);
 
             // Встановлюємо дати
             LocalDateTime now = LocalDateTime.now();
@@ -67,7 +66,13 @@ class FundraisingDataCreationTest {
 
             // Призначаємо категорію
             Long randomCategoryId = 1L + (long)(Math.random() * 5);
-            fundraising.setCategory(randomCategoryId);
+
+// 1. Створюємо об'єкт
+            FundraisingCategory category = new FundraisingCategory();
+// 2. Встановлюємо йому ID
+            category.setId(randomCategoryId);
+// 3. Передаємо готовий об'єкт у fundraising
+            fundraising.setCategory(category);
 
 
             entityManager.persist(fundraising);
@@ -147,7 +152,7 @@ class FundraisingDataCreationTest {
             user.setUsername("user" + i);
             user.setFullName("user" + i);
             user.setPassword("password" + i);
-            user.setUserRole(Role.USER);
+            user.setRole(Role.USER);
             user.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
 
             try {
@@ -178,14 +183,14 @@ class FundraisingDataCreationTest {
             for (int i = 0; i < donationsCount; i++) {
                 Donation donation = new Donation();
                 // Не встановлюємо ID - він буде згенерований автоматично
-                donation.setFundraisingId(fundraising.getId());
+                //donation.setFundraisingId(fundraising.getId());
 
                 // Генеруємо реалістичні суми донатів (від 50 до 5000)
                 double randomAmount = 50 + (Math.random() * 4950);
                 donation.setAmount(BigDecimal.valueOf(Math.round(randomAmount * 100.0) / 100.0));
 
-                donation.setDonorName(donorNames[i % donorNames.length]);
-                donation.setDonorEmail(donorEmails[i % donorEmails.length]);
+                //donation.setDonorName(donorNames[i % donorNames.length]);
+                //donation.setDonorEmail(donorEmails[i % donorEmails.length]);
                 donation.setTransactionId("TXN_" + System.currentTimeMillis() + "_" + i);
                 donation.setCreatedAt(Timestamp.valueOf(LocalDateTime.now().minusHours(i * 3)));
                 donation.setIsAnonymous(Math.random() > 0.75); // 25% анонімних донатів

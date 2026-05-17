@@ -1,19 +1,22 @@
 package com.sakute.project_fumo_backend.domain.service.impl;
 
-import com.sakute.project_fumo_backend.controller.exeption.NotAuthorizedExeption;
-import com.sakute.project_fumo_backend.controller.exeption.NotFoundExeption;
-import com.sakute.project_fumo_backend.controller.exeption.OperationNotAllowedException;
-import com.sakute.project_fumo_backend.domain.enteties.dto.IntellectualPropertyDto;
-import com.sakute.project_fumo_backend.domain.enteties.dto.mapper.IntellectualPropertyMapper;
+import com.sakute.project_fumo_backend.controller.exception.NotAuthorizedException;
+import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
+import com.sakute.project_fumo_backend.controller.exception.OperationNotAllowedException;
+import com.sakute.project_fumo_backend.domain.dto.int_prop.IntellectualPropertyDto;
+import com.sakute.project_fumo_backend.domain.dto.int_prop.IntellectualPropertyMapper;
 import com.sakute.project_fumo_backend.domain.enteties.intprop.IntellectualProperty;
+import com.sakute.project_fumo_backend.domain.enteties.intprop.IntellectualPropertyCategory;
 import com.sakute.project_fumo_backend.domain.enteties.intprop.IpStatus;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.domain.service.specification.IntellectualPropertySpec;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
-import com.sakute.project_fumo_backend.repository.jpa_repo.intprop.IntellectualPropertyCategoryRepository;
-import com.sakute.project_fumo_backend.repository.jpa_repo.intprop.IntellectualPropertyRepository;
+import com.sakute.project_fumo_backend.repository.jpa_repo.IntellectualPropertyCategoryRepository;
+import com.sakute.project_fumo_backend.repository.jpa_repo.IntellectualPropertyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,10 +37,26 @@ public class IntellectualPropertyServiceImpl {
     private final UserRepository userRepository;
     private final IntellectualPropertyMapper mapper;
 
+    // Додай новий метод findAll з фільтрами
+    @Transactional(readOnly = true)
+    public Page<IntellectualPropertyDto> findAll(
+            Long categoryId,
+            String status,
+            String name,
+            Pageable pageable) {
+
+        Specification<IntellectualProperty> spec = Specification
+                .where(IntellectualPropertySpec.hasCategory(categoryId))
+                .and(IntellectualPropertySpec.hasStatus(status))
+                .and(IntellectualPropertySpec.nameContains(name));
+
+        return intellectualPropertyRepository.findAll(spec, pageable).map(mapper::toDto);
+    }
+
+    // Старий метод залиш або зроби делегування
     @Transactional(readOnly = true)
     public Page<IntellectualPropertyDto> findAll(Pageable pageable) {
-        Page<IntellectualProperty> entities = intellectualPropertyRepository.findAll(pageable);
-        return entities.map(mapper::toDto);
+        return findAll(null, null, null, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -57,6 +76,10 @@ public class IntellectualPropertyServiceImpl {
     public List<IntellectualPropertyDto> findByCategory(Long categoryId) {
         List<IntellectualProperty> entities = intellectualPropertyRepository.findByIntellectualPropertyCategory_CategoryId(categoryId);
         return entities.stream().map(mapper::toDto).toList();
+    }
+
+    public List<IntellectualPropertyCategory> getAllCategories(){
+         return categoryRepository.findAll();
     }
 
     @Transactional(readOnly = true)
@@ -83,13 +106,23 @@ public class IntellectualPropertyServiceImpl {
         return mapper.toDto(saved);
     }
 
+    @Transactional
+    public IntellectualPropertyCategory createCategory(IntellectualPropertyCategory category){
+        return categoryRepository.save(category);
+    }
+
+    @Transactional
+    public void deleteCategory(long id){
+        categoryRepository.deleteById(id);
+    }
+
     public IntellectualPropertyDto update(UUID id, IntellectualPropertyDto dto) {
         IntellectualProperty existing = intellectualPropertyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Intellectual Property not found with id: " + id));
 
         // Перевіряємо права доступу
         if (!isOwner(id) && !isAdmin()) {
-            throw new OperationNotAllowedException();
+            throw new OperationNotAllowedException("У вас немає доступу!");
         }
 
         // Оновлюємо поля
@@ -104,10 +137,10 @@ public class IntellectualPropertyServiceImpl {
 
     public void delete(UUID id) {
         IntellectualProperty entity = intellectualPropertyRepository.findById(id)
-                .orElseThrow(() -> new NotFoundExeption("Intellectual Property not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Intellectual Property not found with id: " + id));
 
         if (!isOwner(id) && !isAdmin()) {
-            throw new NotAuthorizedExeption("You don't have permission to delete this intellectual property");
+            throw new NotAuthorizedException("You don't have permission to delete this intellectual property");
         }
 
         intellectualPropertyRepository.delete(entity);

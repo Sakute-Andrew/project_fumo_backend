@@ -1,20 +1,21 @@
 package com.sakute.project_fumo_backend.domain.enteties.intprop;
 
-
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
-@Data
+@Getter
+@Setter // Замінили @Data
 @Table(name = "intellectual_property")
 public class IntellectualProperty {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO) // Для UUID краще використовувати @GeneratedValue(strategy = GenerationType.UUID) у нових версіях Hibernate
     @Column(name = "ip_id")
     private UUID ipId;
 
@@ -37,14 +38,13 @@ public class IntellectualProperty {
     @Column(name = "status", nullable = false)
     private IpStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    // ✅ Прибрали insertable=false, updatable=false
+    // ✅ Додали fetch = FetchType.LAZY
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User owner;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
     private IntellectualPropertyCategory intellectualPropertyCategory;
-
-    // Додаткові конструктори, гетери та сетери можна додати за потребою
 }
-

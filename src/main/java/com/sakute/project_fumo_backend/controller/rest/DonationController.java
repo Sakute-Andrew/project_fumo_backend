@@ -1,12 +1,17 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
-import com.sakute.project_fumo_backend.domain.enteties.dto.donation.DonationRequest;
-import com.sakute.project_fumo_backend.domain.enteties.dto.donation.DonationResponse;
-import com.sakute.project_fumo_backend.domain.enteties.dto.donation.DonationStatsDto;
-import com.sakute.project_fumo_backend.domain.enteties.dto.donation.DonorDisplayDto;
+import com.sakute.project_fumo_backend.domain.dto.donation.DonationRequest;
+import com.sakute.project_fumo_backend.domain.dto.donation.DonationResponse;
+import com.sakute.project_fumo_backend.domain.dto.donation.DonationStatsDto;
+import com.sakute.project_fumo_backend.domain.dto.donation.DonorDisplayDto;
+// Припускаємо, що у вас є або буде DonationListDto для адмінки
+import com.sakute.project_fumo_backend.domain.dto.donation.DonationListDto;
 import com.sakute.project_fumo_backend.domain.service.impl.DonationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import javassist.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,10 +21,42 @@ import java.util.UUID;
 @RequestMapping("/api/v1/donations")
 public class DonationController {
 
-    @Autowired
-    private DonationService donationService;
+    private final DonationService donationService;
 
-    @PostMapping("/process")
+    public DonationController(DonationService donationService) {
+        this.donationService = donationService;
+    }
+
+    // ==========================================
+    // АДМІНСЬКА ЧАСТИНА (для Vue 3 useCrud)
+    // ==========================================
+
+    // Отримання списку донатів (з підтримкою фільтрації по збору)
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<DonationListDto>> getAllDonations(
+            @RequestParam(required = false) UUID fundraisingId,
+            Pageable pageable) {
+
+        Page<DonationListDto> donations = donationService.getAllDonationsForAdmin(fundraisingId, pageable);
+        return ResponseEntity.ok(donations);
+    }
+
+    // Видалення донату (реалізовано)
+    @DeleteMapping("/{donationId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteDonation(@PathVariable UUID donationId) throws NotFoundException {
+        donationService.deleteDonation(donationId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    // ==========================================
+    // ПУБЛІЧНА ЧАСТИНА ТА ЛОГІКА КОРИСТУВАЧІВ
+    // ==========================================
+
+    @PostMapping
+    @PreAuthorize("hasRole('USER')") // Тільки авторизовані можуть донатити
     public ResponseEntity<DonationResponse> processDonation(
             @RequestBody DonationRequest request) {
 
@@ -54,13 +91,7 @@ public class DonationController {
             @PathVariable UUID fundraisingId,
             @RequestParam(defaultValue = "10") int limit) {
 
-        // Тут би була логіка для топ-донатерів
-         List<DonorDisplayDto> topDonors = donationService.getDonors(fundraisingId);
+        List<DonorDisplayDto> topDonors = donationService.getTopDonors(fundraisingId, limit);
         return ResponseEntity.ok(topDonors);
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<DonationResponse> deleteDonation(@PathVariable UUID donationId) {
-        return null;
     }
 }

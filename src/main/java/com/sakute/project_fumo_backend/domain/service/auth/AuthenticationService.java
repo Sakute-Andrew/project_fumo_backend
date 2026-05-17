@@ -1,10 +1,8 @@
 package com.sakute.project_fumo_backend.domain.service.auth;
 
-import com.sakute.project_fumo_backend.domain.enteties.dto.request.LoginRequest;
-import com.sakute.project_fumo_backend.domain.enteties.dto.request.RegisterRequest;
-import com.sakute.project_fumo_backend.domain.enteties.dto.response.AuthenticationDto;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.sakute.project_fumo_backend.domain.dto.auth.LoginRequest;
+import com.sakute.project_fumo_backend.domain.dto.auth.RegisterRequest;
+import com.sakute.project_fumo_backend.domain.dto.auth.AuthenticationDto;
 
 import java.io.IOException;
 
@@ -13,5 +11,5 @@ public interface AuthenticationService {
 
     AuthenticationDto register(RegisterRequest request);
 
-    AuthenticationDto refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException;
+    AuthenticationDto refreshToken(String request) throws IOException;
 }

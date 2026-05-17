@@ -1,5 +1,6 @@
 package com.sakute.project_fumo_backend.repository.jpa_repo;
 
+import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import com.sakute.project_fumo_backend.domain.enteties.user.UserSettings;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -7,5 +8,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserSettingsRepository extends JpaRepository<UserSettings, UUID> {
-    Optional<UserSettings> findUserSettingsByUserId(UUID userId);
+    Optional<UserSettings> findUserSettingsByUser(User user);
 }

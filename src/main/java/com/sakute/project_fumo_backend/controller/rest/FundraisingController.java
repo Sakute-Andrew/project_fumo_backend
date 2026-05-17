@@ -1,7 +1,7 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
-import com.sakute.project_fumo_backend.domain.enteties.dto.FundraisingDto;
-import com.sakute.project_fumo_backend.domain.enteties.dto.FundraisingListDto;
+import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingDto;
+import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingListDto;
 import com.sakute.project_fumo_backend.domain.service.impl.FundraisingService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -23,7 +24,7 @@ public class FundraisingController {
     private FundraisingService fundraisingService;
 
     @GetMapping
-    public ResponseEntity<Page<FundraisingListDto>> getAllFundraisings(
+    public ResponseEntity<Page<FundraisingListDto>> getAllFundraising(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(defaultValue = "recent") String sortBy,
@@ -33,7 +34,7 @@ public class FundraisingController {
         Pageable pageable = createPageable(page, size, sortBy);
 
         Page<FundraisingListDto> fundraisings = fundraisingService
-                .getAllFundraisings(pageable, category, search);
+                .getAllFundraising(pageable, category, search);
 
         return ResponseEntity.ok(fundraisings);
     }
@@ -49,37 +50,37 @@ public class FundraisingController {
     }
 
     @GetMapping("/active")
-    public ResponseEntity<Page<FundraisingListDto>> getActiveFundraisings(
+    public ResponseEntity<Page<FundraisingListDto>> getActiveFundraising(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(defaultValue = "recent") String sortBy) {
 
         Pageable pageable = createPageable(page, size, sortBy);
-        Page<FundraisingListDto> fundraisings = fundraisingService.getActiveFundraisings(pageable);
+        Page<FundraisingListDto> fundraising = fundraisingService.getActiveFundraising(pageable);
 
-        return ResponseEntity.ok(fundraisings);
+        return ResponseEntity.ok(fundraising);
     }
 
     @GetMapping("/popular")
-    public ResponseEntity<Page<FundraisingListDto>> getPopularFundraisings(
+    public ResponseEntity<Page<FundraisingListDto>> getPopularFundraising(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("donorCount").descending());
-        Page<FundraisingListDto> fundraisings = fundraisingService.getPopularFundraisings(pageable);
+        Page<FundraisingListDto> fundraising = fundraisingService.getPopularFundraisings(pageable);
 
-        return ResponseEntity.ok(fundraisings);
+        return ResponseEntity.ok(fundraising);
     }
 
     @GetMapping("/ending-soon")
-    public ResponseEntity<Page<FundraisingListDto>> getEndingSoonFundraisings(
+    public ResponseEntity<Page<FundraisingListDto>> getEndingSoonFundraising(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("endDate").ascending());
-        Page<FundraisingListDto> fundraisings = fundraisingService.getEndingSoonFundraisings(pageable);
+        Page<FundraisingListDto> fundraising = fundraisingService.getEndingSoonFundraising(pageable);
 
-        return ResponseEntity.ok(fundraisings);
+        return ResponseEntity.ok(fundraising);
     }
 
 
@@ -95,6 +96,7 @@ public class FundraisingController {
 
     // Оновлення існуючого фандрейзингу
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @fundraisingService.isFundraisingOwner(#id, authentication.name)")
     public ResponseEntity<FundraisingDto> updateFundraising(
             @PathVariable UUID id,
             @Valid @RequestBody FundraisingDto updateDto) {
@@ -108,6 +110,7 @@ public class FundraisingController {
 
     // Видалення фандрейзингу
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @fundraisingService.isFundraisingOwner(#id, authentication.name)")
     public ResponseEntity<Void> deleteFundraising(@PathVariable UUID id) {
         try {
             fundraisingService.deleteFundraising(id);
@@ -118,16 +121,16 @@ public class FundraisingController {
     }
 
     // Часткове оновлення фандрейзингу (PATCH)
+    // У твоєму FundraisingController
+
     @PatchMapping("/{id}")
-    public ResponseEntity<FundraisingDto> partialUpdateFundraising(
+    @PreAuthorize("hasRole('ADMIN') or @fundraisingService.isFundraisingOwner(#id, authentication.name)")
+    public ResponseEntity<FundraisingDto> partialUpdate(
             @PathVariable UUID id,
-            @RequestBody FundraisingDto updateDto) {
-        try {
-            FundraisingDto updatedFundraising = fundraisingService.partialUpdateFundraising(id, updateDto);
-            return ResponseEntity.ok(updatedFundraising);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+            @RequestBody FundraisingDto updateDto) { // Тут можна без @Valid, бо поля можуть бути null
+
+        // ВИПРАВЛЕНО: викликаємо універсальний метод updateFundraising
+        return ResponseEntity.ok(fundraisingService.updateFundraising(id, updateDto));
     }
 
     private Pageable createPageable(int page, int size, String sortBy) {

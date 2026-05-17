@@ -8,6 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserPostLikeRepository extends JpaRepository<UserPostLike, Long> {
-    Optional<UserPostLike> findUserPostLikeByUserPost(UserPost userPostId);
+    Optional<UserPostLike> findUserPostLikeByPost(UserPost userPostId);
 
 }

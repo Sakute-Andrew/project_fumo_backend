@@ -1,8 +1,6 @@
 package com.sakute.project_fumo_backend.infrastructure.jwt;
 
-
-
-import com.sakute.project_fumo_backend.domain.service.auth.JwtService;
+import com.sakute.project_fumo_backend.domain.service.jwt.JwtService;
 import com.sakute.project_fumo_backend.repository.jpa_repo.TokenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -37,46 +35,53 @@ public class JwtFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String requestPath = request.getServletPath();
-        final boolean isRefresh = requestPath.equals("/api/v1/auth/refresh-token");
-        final String authHeader = request.getHeader("Authorization");
 
+        // 1. Пропускаємо фільтр для ендпоінтів авторизації (включно з refresh-token)
+        // Логіка перевірки рефреш-токена має бути в самому контролері/сервісі, а не у фільтрі
+        if (requestPath.contains("/api/v1/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String jwtToken = authHeader.substring(7);;
-
+        final String jwtToken = authHeader.substring(7);
         String userEmail = null;
 
         try {
             userEmail = jwtService.extractUsername(jwtToken);
         } catch (ExpiredJwtException e) {
-            if (!isRefresh) {
-                filterChain.doFilter(request, response);
-                return;
-            }
+            // Якщо токен протермінований, ми просто не встановлюємо автентифікацію.
+            // Spring Security сам відхилить запит зі статусом 401 Unauthorized або 403.
+            logger.warn("JWT Token is expired");
+        } catch (Exception e) {
+            logger.warn("Invalid JWT Token");
         }
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
 
-            boolean isTokenValid = tokenRepository.findByToken(jwtToken)
+            // Перевіряємо чи токен є в базі і не відкликаний
+            boolean isTokenValidInDb = tokenRepository.findByToken(jwtToken)
                     .map(t -> !t.isExpired() && !t.isRevoked())
                     .orElse(false);
 
-            if (jwtService.isTokenValid(jwtToken, userDetails) && isTokenValid) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+            if (jwtService.isTokenValid(jwtToken, userDetails) && isTokenValidInDb) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
                         userDetails.getAuthorities()
                 );
-
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext()
-                        .setAuthentication(authenticationToken);
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
+
 
         filterChain.doFilter(request, response);
     }

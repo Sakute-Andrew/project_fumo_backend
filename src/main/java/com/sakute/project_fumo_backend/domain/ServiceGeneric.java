@@ -35,10 +35,6 @@ public abstract class ServiceGeneric<T, ID> implements Service<T, ID> {
         repository.delete(t);
     }
 
-    public void deleteById(ID id) {
-        repository.deleteById(id);
-    }
-
     @Override
     public T findById(ID id) {
         Optional<T> entity = repository.findById(id);

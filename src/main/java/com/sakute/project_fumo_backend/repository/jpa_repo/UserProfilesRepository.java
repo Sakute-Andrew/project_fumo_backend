@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UserProfilesRepository extends JpaRepository<UserProfiles, Long> {
-    Optional<UserProfiles> findUserProfilesByUserId(User userId);
+    Optional<UserProfiles> findUserProfilesByUser(User userId);
 }

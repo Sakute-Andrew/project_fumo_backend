@@ -9,9 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Data
 @Entity
@@ -37,19 +35,29 @@ public class User implements UserDetails {
     @Column(name = "fullName", nullable = true)
     private String fullName;
 
+    @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
-    private Role userRole;
+    private Role role; // USER або ADMIN
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "user_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "permission")
+    private Set<Permission> permissions = new HashSet<>();
 
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UserProfiles userProfile;
+    // В User entity — додати ці два поля
+    @Column(name = "profile_picture")
+    private String profilePicture;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-         return List.of(new SimpleGrantedAuthority(userRole.name()));
-    }
+    @Column(name = "bio")
+    private String bio;
+
+    // І виправити mappedBy
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserProfiles userProfile;
 
     @Override
     public boolean isAccountNonExpired() {
@@ -69,6 +77,24 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        if (this.role != null) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+        }
+
+        // Додаємо кожен permission як окремий authority
+        if (this.permissions != null) {
+            for (Permission permission : this.permissions) {
+                authorities.add(new SimpleGrantedAuthority(permission.name()));
+            }
+        }
+
+        return authorities;
     }
 }
 
