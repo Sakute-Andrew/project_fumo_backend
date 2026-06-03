@@ -7,21 +7,30 @@ import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingDto;
 import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingListDto;
 import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingMapper;
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.Fundraising;
+import com.sakute.project_fumo_backend.domain.enteties.fundraising.FundraisingCategory;
+import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingCategoryRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingRepository;
+import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
+import jdk.dynalink.linker.LinkerServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor // Замінює твій ручний конструктор
 public class FundraisingService {
 
+    private final UserRepository userRepository;
+    private final FundraisingCategoryRepository fundraisingCategoryRepository;
     private final FundraisingRepository fundraisingRepository;
     private final FundraisingMapper fundraisingMapper;
 
@@ -44,6 +53,10 @@ public class FundraisingService {
 
         // ВИПРАВЛЕНО: Використовуємо мапер
         return fundraising.map(fundraisingMapper::toListDto);
+    }
+
+    public List<FundraisingCategory> getCategories(){
+        return fundraisingCategoryRepository.findAll();
     }
 
     public Page<FundraisingListDto> getPopularFundraisings(Pageable pageable) {
@@ -81,7 +94,13 @@ public class FundraisingService {
         Fundraising fundraising = fundraisingMapper.toEntity(createDto);
         fundraising.setId(UUID.randomUUID()); // Або дозволь базі самій згенерувати
         fundraising.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        // fundraising.setUserId(getCurrentUser());
+        fundraising.setStartDate(new Timestamp(System.currentTimeMillis()));
+        fundraising.setStatus(Fundraising.Status.ACTIVE);
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User owner = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        fundraising.setOwner(owner);
 
         return fundraisingMapper.toDto(fundraisingRepository.save(fundraising));
     }

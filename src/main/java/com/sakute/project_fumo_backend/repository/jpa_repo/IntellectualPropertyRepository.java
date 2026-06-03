@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 // IntellectualPropertyRepository.java
-public interface IntellectualPropertyRepository
-        extends JpaRepository<IntellectualProperty, UUID>,
-        JpaSpecificationExecutor<IntellectualProperty> { // ← додай це
+public interface IntellectualPropertyRepository extends JpaRepository<IntellectualProperty, UUID>, JpaSpecificationExecutor<IntellectualProperty> {
 
     List<IntellectualProperty> findByNameContainingIgnoreCase(String name);
     List<IntellectualProperty> findByIntellectualPropertyCategory_CategoryId(Long categoryId);

@@ -1,0 +1,26 @@
+package com.sakute.project_fumo_backend.controller.rest;
+
+
+import com.sakute.project_fumo_backend.domain.dto.DashboardStatsDto;
+import com.sakute.project_fumo_backend.domain.service.DashboardService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/admin/dashboard")
+@RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')") // Бронебійний захист: тільки для адмінів
+public class AdminDashboardController {
+
+    private final DashboardService dashboardService;
+
+    @GetMapping("/stats")
+    public ResponseEntity<DashboardStatsDto> getStats() {
+        // Викликаємо наш сервіс, який робить швидкі SQL-запити (.count() та SUM)
+        return ResponseEntity.ok(dashboardService.getStats());
+    }
+}

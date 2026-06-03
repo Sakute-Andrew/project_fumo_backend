@@ -4,65 +4,60 @@ import com.sakute.project_fumo_backend.domain.enteties.fundraising.Fundraising;
 import com.sakute.project_fumo_backend.domain.enteties.intprop.IntellectualProperty;
 import com.sakute.project_fumo_backend.domain.enteties.post.UserPost;
 import com.sakute.project_fumo_backend.domain.enteties.user.Permission;
-import com.sakute.project_fumo_backend.domain.enteties.user.Tag;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
-public class CreatorProfileMapper {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, imports = Permission.class)
+public interface CreatorProfileMapper {
 
-    public UserSummaryDTO toUserSummary(User user) {
-        Set<String> tagNames = user.getUserProfile() != null
-            ? user.getUserProfile().getTags().stream()
-                .map(Tag::getName)
-                .collect(Collectors.toSet())
-            : Set.of();
+    @Mapping(source = "userId", target = "userId")
+    @Mapping(source = "fullName", target = "fullName")
+    @Mapping(source = "username", target = "username")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "userProfile.bio", target = "bio")
+    @Mapping(source = "userProfile.areasOfExpertise", target = "areasOfExpertise")
+    @Mapping(source = "userProfile.location", target = "location")
+    @Mapping(source = "userProfile.website", target = "website")
+    @Mapping(target = "canFundraise", expression = "java(user.getPermissions().contains(Permission.CAN_FUNDRAISE))")
+    @Mapping(target = "canSellIp", expression = "java(user.getPermissions().contains(Permission.CAN_SELL_IP))")
+    UserSummaryDTO toUserSummary(User user);
 
-        return new UserSummaryDTO(
-            user.getUserId(),
-            user.getUsername(),
-            user.getProfilePicture(),
-            user.getBio(),
-            tagNames,
-            user.getPermissions().contains(Permission.CAN_FUNDRAISE),
-            user.getPermissions().contains(Permission.CAN_SELL_IP)
-        );
-    }
-
-    public PostSummaryDTO toPostSummary(UserPost post) {
+    default PostSummaryDTO toPostSummary(UserPost post) {
         return new PostSummaryDTO(
-            post.getUserPostId(),
-            post.getPostHeader(),
-            post.getPostDescription(),
-            post.getPhoto(),
-            post.getCreatedAt(),
-            post.getLikes().size(),
-            post.getComments().size()
+                post.getUserPostId(),
+                post.getPostHeader(),
+                post.getPostDescription(),
+                post.getPhoto(),
+                post.getCreatedAt(),
+                post.getComments().size()
         );
     }
 
-    public FundraisingSummaryDTO toFundraisingSummary(Fundraising f) {
+    default FundraisingSummaryDTO toFundraisingSummary(Fundraising f) {
         return new FundraisingSummaryDTO(
-            f.getId(),
-            f.getTitle(),
-            f.getDescription(),
-            f.getGoalAmount(),
-            f.getCurrentAmount(), // наш обчислюваний метод
-            f.getEndDate(),
-            f.getStatus()
+                f.getId(),
+                f.getTitle(),
+                f.getDescription(),
+                f.getGoalAmount(),
+                f.getCurrentAmount(),
+                f.getEndDate(),
+                f.getStatus()
         );
     }
 
-    public IpSummaryDTO toIpSummary(IntellectualProperty ip) {
+    default IpSummaryDTO toIpSummary(IntellectualProperty ip) {
         return new IpSummaryDTO(
-            ip.getIpId(),
-            ip.getName(),
-            ip.getDescription(),
-            ip.getTypeIp(),
-            ip.getStatus()
+                ip.getIpId(),
+                ip.getName(),
+                ip.getDescription(),
+                ip.getTypeIp(),
+                ip.getStatus()
         );
     }
 }

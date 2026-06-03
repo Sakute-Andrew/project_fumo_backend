@@ -3,6 +3,8 @@ package com.sakute.project_fumo_backend.controller.rest;
 import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
 import com.sakute.project_fumo_backend.domain.dto.post.UserPostDto;
 import com.sakute.project_fumo_backend.domain.enteties.post.PostTagTopic;
+import com.sakute.project_fumo_backend.domain.service.CommentService;
+import com.sakute.project_fumo_backend.domain.service.PostService;
 import com.sakute.project_fumo_backend.domain.service.impl.CommentServiceImpl;
 import com.sakute.project_fumo_backend.domain.service.impl.PostServiceImpl;
 import jakarta.validation.Valid;
@@ -21,13 +23,11 @@ import java.util.UUID;
 @RequestMapping("api/v1/posts")
 public class PostController {
 
-    private final PostServiceImpl postService;
-    private final CommentServiceImpl commentService;
+    private final PostService postService;
 
     @Autowired
-    public PostController(PostServiceImpl postService, CommentServiceImpl commentService) {
+    public PostController(PostService postService) {
         this.postService = postService;
-        this.commentService = commentService;
     }
 
     // Отримання всіх постів з підтримкою пагінації та пошуку

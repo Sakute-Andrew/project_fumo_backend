@@ -81,27 +81,6 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
                 : null;
     }
 
-    public Page<UserPostDto> searchByTitle(String title, Pageable pageable) {
-        Page<UserPost> userPostPage = postRepository.findByPostHeaderContainingIgnoreCase(title, pageable);
-        return postMapper.toDtoPage(userPostPage);
-    }
-
-    public Page<UserPostDto> findByCategory(String topicName, Pageable pageable) {
-        Page<UserPost> userPostPage = postRepository.findByTopicName(topicName, pageable);
-        return postMapper.toDtoPage(userPostPage);
-    }
-
-    public Page<UserPostDto> findByUserId(UUID userId, Pageable pageable) {
-        Page<UserPost> userPostPage = postRepository.findByUserId(userId, pageable);
-        return postMapper.toDtoPage(userPostPage);
-    }
-
-    public List<UserPostDto> findAllForExplore(int limit) {
-        Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
-        List<UserPost> userPosts = postRepository.findLatestPosts(pageable); // має повертати List<UserPost>
-        return postMapper.toDtoList(userPosts);
-    }
-
     @Override
     public Page<UserPostDto> findAll(String name, Pageable pageable) {
         return null;
@@ -135,11 +114,6 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
             throw new NotFoundException("Пост з ID " + id + " не знайдено");
         }
         postRepository.deleteByUserPostId(id);
-    }
-
-    // Перевірка власника
-    public boolean isOwner(UUID postId, String username) {
-        return postRepository.isPostOwnerByUsername(postId, username);
     }
 
     // Збереження нового поста

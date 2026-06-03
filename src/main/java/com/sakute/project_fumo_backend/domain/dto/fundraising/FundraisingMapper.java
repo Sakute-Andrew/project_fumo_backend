@@ -13,7 +13,8 @@ public abstract class FundraisingMapper { // Використовуємо abstra
     @Mapping(target = "daysLeft", ignore = true)
     public abstract FundraisingListDto toListDto(Fundraising entity);
 
-    @Mapping(source = "owner.fullName", target = "userName") // було userId.fullName
+    @Mapping(source = "owner.fullName", target = "userName") // Це залишаємо для красивого відображення
+    @Mapping(source = "owner.username", target = "ownerUsername")// було userId.fullName
     @Mapping(source = "category.id", target = "category")   // додай це
     @Mapping(target = "progressPercentage", ignore = true)
     @Mapping(target = "daysLeft", ignore = true)
@@ -31,6 +32,8 @@ public abstract class FundraisingMapper { // Використовуємо abstra
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "owner", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "startDate", ignore = true)
     @Mapping(target = "donations", ignore = true)
     @Mapping(target = "category", ignore = true)
     public abstract Fundraising toEntity(FundraisingDto dto);

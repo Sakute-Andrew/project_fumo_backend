@@ -27,13 +27,11 @@ public class UserProfiles {
     @Column(name = "location")
     private String location;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_profile_tags",
-            joinColumns = @JoinColumn(name = "user_profile_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private Set<Tag> tags = new HashSet<>();
+    @Column(name = "bio")
+    private String bio;
+
+    @Column(name = "areas_of_expertise")
+    private String areasOfExpertise;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

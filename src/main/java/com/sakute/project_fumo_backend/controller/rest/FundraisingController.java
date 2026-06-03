@@ -2,8 +2,10 @@ package com.sakute.project_fumo_backend.controller.rest;
 
 import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingDto;
 import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingListDto;
+import com.sakute.project_fumo_backend.domain.enteties.fundraising.FundraisingCategory;
 import com.sakute.project_fumo_backend.domain.service.impl.FundraisingService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,8 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/fundraising")
 public class FundraisingController {
@@ -38,6 +42,12 @@ public class FundraisingController {
 
         return ResponseEntity.ok(fundraisings);
     }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<FundraisingCategory>> getAllCategories() {
+        return ResponseEntity.ok(fundraisingService.getCategories());
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<FundraisingDto> getFundraisingById(@PathVariable UUID id) {
@@ -90,6 +100,7 @@ public class FundraisingController {
             FundraisingDto createdFundraising = fundraisingService.createFundraising(createDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdFundraising);
         } catch (RuntimeException e) {
+            log.error("Помилка створення фандрейзингу: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }

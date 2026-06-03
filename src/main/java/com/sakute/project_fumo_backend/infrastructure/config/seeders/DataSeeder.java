@@ -61,7 +61,6 @@ public class DataSeeder implements CommandLineRunner {
         admin.setPassword(passwordEncoder.encode("12345"));
         admin.setFullName("Головний Адміністратор");
         admin.setRole(Role.ADMIN);
-        admin.setBio("Люблю котів і писати на Spring Boot.");
         admin.setCreatedAt(Timestamp.from(Instant.now()));
 
         UserProfiles adminProfile = new UserProfiles();

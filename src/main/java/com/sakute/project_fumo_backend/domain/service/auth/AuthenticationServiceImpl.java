@@ -13,8 +13,10 @@ import com.sakute.project_fumo_backend.domain.dto.auth.RegisterRequest;
 import com.sakute.project_fumo_backend.domain.dto.auth.AuthenticationDto;
 import com.sakute.project_fumo_backend.domain.enteties.user.Role;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.domain.enteties.user.UserProfiles;
 import com.sakute.project_fumo_backend.domain.service.jwt.JwtService;
 import com.sakute.project_fumo_backend.repository.jpa_repo.TokenRepository;
+import com.sakute.project_fumo_backend.repository.jpa_repo.UserProfilesRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import jakarta.servlet.ServletInputStream;
 import lombok.RequiredArgsConstructor;
@@ -41,23 +43,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final UserProfilesRepository userProfilesRepository;
 
     @Override
     @Transactional
     public AuthenticationDto login(LoginRequest request) {
 
         if (request == null || request.getEmail() == null || request.getPassword() == null) {
-            throw new IllegalArgumentException("Login request, email or password cannot be null");
+            throw new IllegalArgumentException("Поля не можуть бути порожні");
         }
 
         User user = userRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(() ->
-                        new NotFoundException("User with email [" + request.getEmail() + "] not found")
+                        new NotFoundException("Користувача з емейлом " + request.getEmail() + " не існує")
                 );
 
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            // Викидаєш свій кастомний ексепшн, який на фронт поверне красивий статус (наприклад, 401 або 400)
+            throw new InvalidInputException("Неправильний пароль");
+        }
+
         if (user == null) {
-            throw new NotFoundException("User object is null after fetching by email");
+            throw new NotFoundException("Об'єкт користувача порожній!");
         }
 
         authenticationManager.authenticate(
@@ -67,10 +75,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 )
         );
 
+
         try {
             revokeAllUserTokens(user);
         } catch (NotFoundException e) {
-            log.error("Revoke all user tokens failed", e);
+            log.error("Не вдалося відкликати всі токени", e);
         }
 
         return saveUserTokenAndReturnAuthResponse(user);
@@ -82,14 +91,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationDto register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail()) || userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("User with email [" + request.getEmail() + "] or username [" + request.getUsername() + "] already exists.");
+            throw new RuntimeException("Користувач з таким логіном вже існує!");
         }
 
-
         User user = userRepository.save(buildUser(request));
+
+        UserProfiles profile = new UserProfiles();
+        profile.setUser(user);
+        userProfilesRepository.save(profile);
+
         return saveUserTokenAndReturnAuthResponse(user);
     }
-
 
     @Transactional
     public AuthenticationDto refreshToken(String refreshToken) {
@@ -151,7 +163,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return AuthenticationDto.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
-                .user(new AuthUserDto(user.getUserId() ,user.getUsername(), user.getEmail(), user.getRole()))
+                .user(AuthUserDto.builder()
+                        .id(user.getUserId())
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .userRole(user.getRole())
+                        .permissions(user.getPermissions())
+                        .build())
                 .build();
     }
 

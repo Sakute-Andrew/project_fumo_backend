@@ -30,7 +30,7 @@ public class UserPost {
     @Column(name = "post_description")
     private String postDescription;
 
-    @Column(name = "post_text")
+    @Column(name = "post_text", columnDefinition = "TEXT", length = 22555)
     private String postText;
 
     @Column(name = "created_at", nullable = false)
@@ -51,6 +51,4 @@ public class UserPost {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserPostLike> likes = new ArrayList<>();
 }

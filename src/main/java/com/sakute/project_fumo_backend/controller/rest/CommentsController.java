@@ -2,6 +2,7 @@ package com.sakute.project_fumo_backend.controller.rest;
 
 import com.sakute.project_fumo_backend.domain.dto.comment.CommentDto;
 import com.sakute.project_fumo_backend.domain.dto.comment.CommentResponseDto;
+import com.sakute.project_fumo_backend.domain.service.CommentService;
 import com.sakute.project_fumo_backend.domain.service.impl.CommentServiceImpl;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,10 @@ import java.util.UUID;
 @RequestMapping("api/v1")
 public class CommentsController {
 
-    private final CommentServiceImpl commentService;
+    private final CommentService commentService;
 
     @Autowired
-    public CommentsController(CommentServiceImpl commentService, UserPostRepository userPostRepository) {
+    public CommentsController(CommentService commentService, UserPostRepository userPostRepository) {
         this.commentService = commentService;
     }
 

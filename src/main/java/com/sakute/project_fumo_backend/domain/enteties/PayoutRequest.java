@@ -32,7 +32,8 @@ public class PayoutRequest {
     private Timestamp createdAt;
 
     @Column(name = "status", nullable = false)
-    private String status; // PENDING, COMPLETED, REJECTED
+    @Enumerated(EnumType.STRING)
+    private RequestStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fundraising_id", nullable = false)

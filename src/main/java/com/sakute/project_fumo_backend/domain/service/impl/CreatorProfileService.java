@@ -5,6 +5,7 @@ import com.sakute.project_fumo_backend.domain.enteties.fundraising.Fundraising;
 import com.sakute.project_fumo_backend.domain.enteties.intprop.IpStatus;
 import com.sakute.project_fumo_backend.domain.enteties.user.Permission;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.domain.enteties.user.UserProfiles;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.IntellectualPropertyRepository;
@@ -29,7 +30,7 @@ public class CreatorProfileService {
 
     @Transactional(readOnly = true)
     public CreatorProfileDTO getProfile(UUID userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdWithProfile(userId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "User not found: " + userId
             ));
@@ -64,5 +65,18 @@ public class CreatorProfileService {
             fundraisings,
             ips
         );
+    }
+
+    @Transactional
+    public void updateProfile(UUID userId, UpdateProfileRequest request) {
+        User user = userRepository.findByIdWithProfile(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + userId));
+
+        UserProfiles profile = user.getUserProfile();
+        profile.setBio(request.bio());
+        profile.setAreasOfExpertise(request.areasOfExpertise());
+        profile.setWebsite(request.website());
+        profile.setLocation(request.location());
+        // userProfilesRepository.save не потрібен — транзакція збереже автоматично
     }
 }

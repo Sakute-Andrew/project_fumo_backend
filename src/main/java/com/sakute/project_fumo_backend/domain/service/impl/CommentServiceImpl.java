@@ -76,15 +76,13 @@ public class CommentServiceImpl extends ServiceGeneric<Comment, Long> implements
         }
     }
 
-    @Transactional // Обов'язково для операцій Modifying (видалення/оновлення)
-    public ResponseEntity<?> deleteByCommentId(UUID postId, Long commentId) {
-        // Метод поверне кількість видалених рядків
+    @Transactional
+    public boolean deleteByCommentId(UUID postId, Long commentId) {
+        // Метод повертає кількість видалених рядків
         int deletedCount = commentRepository.deleteByPostIdAndCommentId(postId, commentId);
 
-        if (deletedCount > 0) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().body("Comment not found or doesn't belong to this post");
+        // Повертаємо true, якщо видалено хоча б 1 рядок, і false, якщо ні
+        return deletedCount > 0;
     }
 
     public boolean isCommentAuthor(Long commentId, String username) throws NotFoundException {

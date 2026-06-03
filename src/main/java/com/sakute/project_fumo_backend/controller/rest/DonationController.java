@@ -6,7 +6,7 @@ import com.sakute.project_fumo_backend.domain.dto.donation.DonationStatsDto;
 import com.sakute.project_fumo_backend.domain.dto.donation.DonorDisplayDto;
 // Припускаємо, що у вас є або буде DonationListDto для адмінки
 import com.sakute.project_fumo_backend.domain.dto.donation.DonationListDto;
-import com.sakute.project_fumo_backend.domain.service.impl.DonationService;
+import com.sakute.project_fumo_backend.domain.service.DonationService;
 import javassist.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

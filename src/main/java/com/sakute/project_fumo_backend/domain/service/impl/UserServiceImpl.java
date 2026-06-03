@@ -3,11 +3,9 @@ package com.sakute.project_fumo_backend.domain.service.impl;
 import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
 import com.sakute.project_fumo_backend.domain.ServiceGeneric;
 import com.sakute.project_fumo_backend.domain.dto.user.AdminUserDto;
-import com.sakute.project_fumo_backend.domain.dto.user.UserProfileDto;
-import com.sakute.project_fumo_backend.domain.dto.user.UserProfileMapper;
+import com.sakute.project_fumo_backend.domain.enteties.user.Permission;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import com.sakute.project_fumo_backend.domain.service.UserService;
-import com.sakute.project_fumo_backend.repository.jpa_repo.UserProfilesRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,21 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 public class UserServiceImpl extends ServiceGeneric<User, UUID> implements UserService {
 
     private final UserRepository userRepository;
-    private final UserProfilesRepository userProfilesRepository;
-    private final UserProfileMapper userProfileMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserProfilesRepository userProfilesRepository, UserProfileMapper userProfileMapper) {
+    public UserServiceImpl(UserRepository userRepository) {
         super(userRepository);
         this.userRepository = userRepository;
-        this.userProfilesRepository = userProfilesRepository;
-        this.userProfileMapper = userProfileMapper;
     }
 
     @Override
@@ -40,6 +35,14 @@ public class UserServiceImpl extends ServiceGeneric<User, UUID> implements UserS
                 .filter(list ->!list.isEmpty())
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public void updatePermissions(UUID userId, Set<Permission> permissions) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        user.setPermissions(permissions);
+        userRepository.save(user);
     }
 
     @Transactional
@@ -70,28 +73,5 @@ public class UserServiceImpl extends ServiceGeneric<User, UUID> implements UserS
         return ResponseEntity.ok(AdminUserDto.fromEntity(userRepository.save(user)));
     }
 
-    @Override
-    public ResponseEntity<UserProfileDto> findUserpage(String username) throws NotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("User with username '" + username + "' not found"));
-
-        UserProfileDto dto = userProfileMapper.toDto(user);
-        return ResponseEntity.ok(dto);
-    }
-
-    @Override
-    public Boolean existsByEmail(String email) {
-        return userRepository.findUserByEmail(email) != null;
-    }
-
-    @Override
-    public Boolean existsByUsername(String username) {
-        return !userRepository.findUserByUsername(username).isEmpty();
-    }
-
-    @Override
-    public Boolean deleteByEmail(String email) {
-        return !userRepository.deleteByEmail(email);
-    }
 
 }

@@ -54,6 +54,7 @@ public class IntellectualPropertyController {
         return ResponseEntity.ok(intellectualPropertyService.getAllCategories());
     }
 
+
     @PostMapping("/categories")
     public ResponseEntity<IntellectualPropertyCategory> сreateCategory(@Valid @RequestBody IntellectualPropertyCategory category) {
         return ResponseEntity.ok(intellectualPropertyService.createCategory(category));

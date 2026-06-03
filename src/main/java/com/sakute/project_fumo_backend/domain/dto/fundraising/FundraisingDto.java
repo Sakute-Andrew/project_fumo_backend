@@ -16,12 +16,14 @@ import java.util.UUID;
 public class FundraisingDto {
     private UUID id;
     private String title;
+    private String ownerUsername;
     private String description;
     private BigDecimal goalAmount;
     private BigDecimal currentAmount;
     private Timestamp endDate;
     private Timestamp createdAt;
     private Long category;
+    private String status;
     private String userName;
     private int progressPercentage;
     private int daysLeft;

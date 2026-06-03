@@ -1,6 +1,7 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
 import com.sakute.project_fumo_backend.domain.dto.PayoutRequestDto;
+import com.sakute.project_fumo_backend.domain.enteties.RequestStatus;
 import com.sakute.project_fumo_backend.domain.service.impl.PayoutRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,12 @@ public class PayoutRequestController {
     public ResponseEntity<PayoutRequestDto> update(@PathVariable UUID id, @RequestBody PayoutRequestDto dto) {
         // Оскільки в useCrud метод save викликає PUT запит і передає все тіло форми,
         // ми просто беремо статус із переданого об'єкта
-        return ResponseEntity.ok(payoutService.updateStatus(id, dto.getStatus()));
+        return ResponseEntity.ok(payoutService.updateStatus(id, RequestStatus.valueOf(dto.getStatus())));
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<PayoutRequestDto> create(@RequestBody PayoutRequestDto dto) {
+        return ResponseEntity.ok(payoutService.create(dto));
     }
 }

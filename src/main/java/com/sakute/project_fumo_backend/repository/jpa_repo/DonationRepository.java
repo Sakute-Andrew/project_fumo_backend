@@ -27,4 +27,7 @@ public interface DonationRepository extends JpaRepository<Donation, UUID> {
     @Query("SELECT COALESCE(SUM(d.amount), 0) FROM Donation d WHERE d.fundraising.id = :fundraisingId")
     BigDecimal sumDonationsByFundraisingId(@Param("fundraisingId") UUID fundraisingId);
 
+
+    @Query("SELECT COALESCE(SUM(d.amount), 0) FROM Donation d WHERE d.fundraising.id = :fundraisingId")
+    BigDecimal sumByFundraisingId(@Param("fundraisingId") UUID fundraisingId);
 }

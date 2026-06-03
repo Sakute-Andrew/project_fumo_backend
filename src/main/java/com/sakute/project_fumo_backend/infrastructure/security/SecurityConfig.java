@@ -49,6 +49,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/v1/donations/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/intprop/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/photo/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/files/documents/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/files/photos/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/admin/**").permitAll()
                                 .anyRequest().authenticated()
                 )
 
@@ -67,7 +70,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // TODO: Change before deployment
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174")); // TODO: Change before deployment
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

@@ -35,8 +35,6 @@ public class AdminUserDto {
                 .fullName(user.getFullName())
                 .role(user.getRole())
                 .permissions(user.getPermissions())
-                .profilePicture(user.getProfilePicture())
-                .bio(user.getBio())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

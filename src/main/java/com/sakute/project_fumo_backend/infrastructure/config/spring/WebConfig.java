@@ -22,19 +22,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Ваші існуючі маппінги
+        // старий — залиш поки є записи в БД що посилаються на старі шляхи
         registry.addResourceHandler("/photos/posts/**")
                 .addResourceLocations("file:data/photos/posts/");
 
         registry.addResourceHandler("/photos/users/**")
                 .addResourceLocations("file:data/photos/users/");
 
-        registry.addResourceHandler("/files/**")
-                .addResourceLocations("file:data/files/");
-
-        // Додатковий маппінг для повного шляху
-        registry.addResourceHandler("/data/**")
-                .addResourceLocations("file:data/");
     }
 
 

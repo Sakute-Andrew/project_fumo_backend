@@ -3,43 +3,40 @@ package com.sakute.project_fumo_backend.domain.dto.int_prop;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 public class IntellectualPropertyDto {
 
-    // Видалено ipId, бо при створенні він генерується базою, а при оновленні береться з URL
-    // Але якщо він тобі дуже треба в DTO, залиши без NotNull
     private UUID ipId;
 
-    @NotBlank(message = "Name is required") // Краще NotBlank для рядків
+    @NotBlank(message = "Name is required")
     @Size(max = 238, message = "Maximum characters used")
     private String name;
 
-    @NotBlank(message = "Description is required")
-    @Size(max = 1000, message = "Maximum characters used")
     private String description;
 
-    @NotBlank
+    @NotBlank(message = "Type is required")
     private String typeIp;
 
-    @NotBlank
+    private UUID ownerId;
+
     private String userFullname;
 
+    private Timestamp createdAt;
 
-    @NotNull(message = "Price is required")
-    private BigDecimal price;
-
-    @NotBlank
     private String fileIp;
 
-    @NotBlank
+    @NotBlank(message = "Status is required")
     private String status;
 
+    @NotNull(message = "Category ID is required")
+    private Long categoryId;
 
-    @NotNull
-    private String intellectualPropertyCategory;
+    private String categoryName;
 }

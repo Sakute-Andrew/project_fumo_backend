@@ -15,12 +15,13 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PostMapper {
 
+    // --- Сутність -> DTO (Віддаємо на фронтенд) ---
     @Mapping(source = "userPostId", target = "id")
-    @Mapping(source = "postDescription", target = "postBody")
+    @Mapping(source = "postText", target = "postBody")         // Великий текст -> postBody
+    @Mapping(source = "postDescription", target = "postText")  // Короткий опис -> postText
     @Mapping(source = "createdAt", target = "postDate")
     @Mapping(source = "topic", target = "postTopic")
     @Mapping(source = "author", target = "user")
-    @Mapping(target = "postText", ignore = true)  // якщо не потрібен
     UserPostDto toDto(UserPost post);
 
     List<UserPostDto> toDtoList(List<UserPost> posts);
@@ -29,20 +30,25 @@ public interface PostMapper {
         return postPage == null ? null : postPage.map(this::toDto);
     }
 
-    @Mapping(target = "userPostId", ignore = true)
-    @Mapping(target = "author", ignore = true)             // було userId
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "topic", ignore = true)              // було postTagTopic
-    @Mapping(source = "postBody", target = "postDescription")
-    void updateEntityFromDto(UserPostDto dto, @MappingTarget UserPost entity);
-
+    // --- DTO -> Сутність (Зберігаємо в базу) ---
     @Mapping(source = "id", target = "userPostId")
-    @Mapping(source = "postBody", target = "postDescription")
-    @Mapping(source = "user", target = "author")           // було userId
-    @Mapping(target = "topic", ignore = true)              // було postTagTopic
+    @Mapping(source = "postBody", target = "postText")         // postBody -> Великий текст
+    @Mapping(source = "postText", target = "postDescription")  // postText -> Короткий опис
+    @Mapping(source = "user", target = "author")
+    @Mapping(target = "topic", ignore = true)
     @Mapping(target = "createdAt", source = "postDate",
             defaultExpression = "java(new java.sql.Timestamp(System.currentTimeMillis()))")
     UserPost toEntity(UserPostDto dto);
+
+    // --- Оновлення існуючої сутності ---
+    @Mapping(target = "userPostId", ignore = true)
+    @Mapping(target = "author", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "topic", ignore = true)
+    @Mapping(source = "postBody", target = "postText")         // postBody -> Великий текст
+    @Mapping(source = "postText", target = "postDescription")  // postText -> Короткий опис
+    void updateEntityFromDto(UserPostDto dto, @MappingTarget UserPost entity);
+
 
     @Mapping(source = "userId", target = "id")
     UserDto userToUserDto(User user);
@@ -50,7 +56,5 @@ public interface PostMapper {
     @Mapping(source = "id", target = "userId")
     User userDtoToUser(UserDto userDto);
 
-    // MapStruct сам знайде як конвертувати PostTagTopic -> PostTopicDto
-// якщо додати окремий метод:
     PostTopicDto toTopicDto(PostTagTopic topic);
 }

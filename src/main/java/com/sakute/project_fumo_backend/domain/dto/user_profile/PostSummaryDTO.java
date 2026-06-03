@@ -9,6 +9,5 @@ public record PostSummaryDTO(
     String postDescription,
     String photo,
     Timestamp createdAt,
-    int likesCount,
     int commentsCount
 ) {}

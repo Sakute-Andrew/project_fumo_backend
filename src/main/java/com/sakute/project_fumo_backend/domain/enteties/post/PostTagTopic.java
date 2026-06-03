@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "post_tag_topic")
+@Table(name = "user_post_tag")
 public class PostTagTopic {
 
     @Id

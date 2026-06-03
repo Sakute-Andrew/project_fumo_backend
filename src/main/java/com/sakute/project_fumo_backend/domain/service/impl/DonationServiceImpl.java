@@ -1,8 +1,10 @@
 package com.sakute.project_fumo_backend.domain.service.impl;
 
+import com.sakute.project_fumo_backend.domain.ServiceGeneric;
 import com.sakute.project_fumo_backend.domain.dto.donation.*;
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.*;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.domain.service.DonationService;
 import com.sakute.project_fumo_backend.repository.jpa_repo.DonationRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingRepository;
@@ -24,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class DonationService {
+public class DonationServiceImpl extends ServiceGeneric<Donation, UUID> implements DonationService  {
 
     private final DonationRepository donationRepository;
 
@@ -32,7 +34,8 @@ public class DonationService {
 
     private final UserRepository userRepository;
 
-    public DonationService(DonationRepository donationRepository, FundraisingRepository fundraisingRepository, UserRepository userRepository) {
+    public DonationServiceImpl(DonationRepository donationRepository, FundraisingRepository fundraisingRepository, UserRepository userRepository) {
+        super(donationRepository);
         this.donationRepository = donationRepository;
         this.fundraisingRepository = fundraisingRepository;
         this.userRepository = userRepository;
@@ -139,11 +142,6 @@ public class DonationService {
     public void deleteDonation(UUID donationId) throws NotFoundException {
         Donation donation = donationRepository.findById(donationId)
                 .orElseThrow(() -> new NotFoundException("Донат не знайдено"));
-
-        // Опціонально: якщо ви видаляєте донат, можливо, треба відняти суму від currentAmount збору
-        // Fundraising fundraising = donation.getFundraising();
-        // fundraising.setCurrentAmount(fundraising.getCurrentAmount().subtract(donation.getAmount()));
-        // fundraisingRepository.save(fundraising);
 
         donationRepository.delete(donation);
     }

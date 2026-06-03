@@ -13,7 +13,7 @@ import java.util.*;
 
 @Data
 @Entity
-@Table(name = "user_t")
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {
@@ -47,13 +47,6 @@ public class User implements UserDetails {
 
     @Column(name = "created_at")
     private Timestamp createdAt;
-
-    // В User entity — додати ці два поля
-    @Column(name = "profile_picture")
-    private String profilePicture;
-
-    @Column(name = "bio")
-    private String bio;
 
     // І виправити mappedBy
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
