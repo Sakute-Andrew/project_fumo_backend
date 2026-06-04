@@ -27,7 +27,8 @@ public class FileController {
     }
 
     @GetMapping("/{subfolder}/{fileName}")
-    public ResponseEntity<byte[]> download(@PathVariable String subfolder, @PathVariable String fileName) throws IOException {
+    public ResponseEntity<byte[]> download(@PathVariable String subfolder, @PathVariable String fileName) 
+        throws IOException {
         byte[] data = fileService.download(subfolder, fileName);
         String contentType = URLConnection.guessContentTypeFromName(fileName);
         if (contentType == null) contentType = "application/octet-stream";
