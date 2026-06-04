@@ -29,7 +29,7 @@ public class UserPostDto {
 
     private Date postDate;
 
-    @NotNull(message = "You must select topic of post") // Виправлено (NotBlank -> NotNull)
+    @NotNull(message = "You must select topic of post")
     private PostTopicDto postTopic;
 
     private String photo;
