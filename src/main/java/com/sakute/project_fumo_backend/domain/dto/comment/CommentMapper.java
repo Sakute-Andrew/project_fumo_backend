@@ -20,7 +20,8 @@ public interface CommentMapper {
     @Mapping(target = "commentId", ignore = true)
     @Mapping(target = "author", ignore = true)             
     @Mapping(target = "post", ignore = true)               
-    @Mapping(target = "createdAt", expression = "java(java.sql.Timestamp.from(java.time.Instant.now()))")
+    @Mapping(target = "createdAt", 
+             expression = "java(java.sql.Timestamp.from(java.time.Instant.now()))")
     Comment toEntity(CommentDto dto);
 
     @Mapping(target = "userId", source = "author.userId")  // було userId.userId
