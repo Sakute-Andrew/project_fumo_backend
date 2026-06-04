@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 import java.util.UUID;
 
-// IntellectualPropertyRepository.java
 public interface IntellectualPropertyRepository extends JpaRepository<IntellectualProperty, UUID>, JpaSpecificationExecutor<IntellectualProperty> {
 
     List<IntellectualProperty> findByNameContainingIgnoreCase(String name);
