@@ -13,14 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/admin/dashboard")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')") // Бронебійний захист: тільки для адмінів
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminDashboardController {
 
     private final DashboardService dashboardService;
 
     @GetMapping("/stats")
     public ResponseEntity<DashboardStatsDto> getStats() {
-        // Викликаємо наш сервіс, який робить швидкі SQL-запити (.count() та SUM)
         return ResponseEntity.ok(dashboardService.getStats());
     }
 }

@@ -22,7 +22,7 @@ public class FundraisingDto {
     private BigDecimal currentAmount;
     private Timestamp endDate;
     private Timestamp createdAt;
-    private Long category;
+    private String category;
     private String status;
     private String userName;
     private int progressPercentage;

@@ -17,9 +17,9 @@ public interface PostMapper {
 
     // --- Сутність -> DTO (Віддаємо на фронтенд) ---
     @Mapping(source = "userPostId", target = "id")
-    @Mapping(source = "postText", target = "postBody")         // Великий текст -> postBody
-    @Mapping(source = "postDescription", target = "postText")  // Короткий опис -> postText
-    @Mapping(source = "createdAt", target = "postDate")
+    @Mapping(source = "postText", target = "postBody")
+    @Mapping(source = "postDescription", target = "postDescription")
+    @Mapping(source = "createdAt", target = "createdAt")
     @Mapping(source = "topic", target = "postTopic")
     @Mapping(source = "author", target = "user")
     UserPostDto toDto(UserPost post);
@@ -32,11 +32,11 @@ public interface PostMapper {
 
     // --- DTO -> Сутність (Зберігаємо в базу) ---
     @Mapping(source = "id", target = "userPostId")
-    @Mapping(source = "postBody", target = "postText")         // postBody -> Великий текст
-    @Mapping(source = "postText", target = "postDescription")  // postText -> Короткий опис
+    @Mapping(source = "postBody", target = "postText")
+    @Mapping(source = "postDescription", target = "postDescription")
     @Mapping(source = "user", target = "author")
     @Mapping(target = "topic", ignore = true)
-    @Mapping(target = "createdAt", source = "postDate",
+    @Mapping(target = "createdAt", source = "createdAt",
             defaultExpression = "java(new java.sql.Timestamp(System.currentTimeMillis()))")
     UserPost toEntity(UserPostDto dto);
 
@@ -45,8 +45,8 @@ public interface PostMapper {
     @Mapping(target = "author", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "topic", ignore = true)
-    @Mapping(source = "postBody", target = "postText")         // postBody -> Великий текст
-    @Mapping(source = "postText", target = "postDescription")  // postText -> Короткий опис
+    @Mapping(source = "postBody", target = "postText")
+    @Mapping(source = "postDescription", target = "postDescription")
     void updateEntityFromDto(UserPostDto dto, @MappingTarget UserPost entity);
 
 

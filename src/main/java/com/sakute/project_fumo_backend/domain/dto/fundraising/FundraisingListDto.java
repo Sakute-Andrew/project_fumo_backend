@@ -30,7 +30,7 @@ public class FundraisingListDto {
     private BigDecimal currentAmount;
     private Timestamp endDate;
     private Timestamp createdAt;
-    private Long category;
+    private String category;
     private int progressPercentage;
     private int daysLeft;
 }

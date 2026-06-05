@@ -16,4 +16,6 @@ public interface IntellectualPropertyRepository extends JpaRepository<Intellectu
     List<IntellectualProperty> findByOwner_Username(String username);
     boolean existsByIpIdAndOwner_Username(UUID id, String username);
     List<IntellectualProperty> findByOwnerUserIdAndStatus(UUID userId, IpStatus status);
+
+    long countByStatus(IpStatus status);
 }

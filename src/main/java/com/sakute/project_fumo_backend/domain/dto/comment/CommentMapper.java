@@ -23,7 +23,7 @@ public interface CommentMapper {
     @Mapping(target = "createdAt", expression = "java(java.sql.Timestamp.from(java.time.Instant.now()))")
     Comment toEntity(CommentDto dto);
 
-    @Mapping(target = "userId", source = "author.userId")  // було userId.userId
+    @Mapping(target = "userPostId", source = "post.userPostId")
     CommentDto toDto(Comment comment);
 
     List<CommentResponseDto> toResponseDtoList(List<Comment> comments);

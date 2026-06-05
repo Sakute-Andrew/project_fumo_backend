@@ -1,5 +1,7 @@
 package com.sakute.project_fumo_backend.infrastructure.security;
 
+import com.sakute.project_fumo_backend.controller.exception.security.CustomAccessDeniedHandler;
+import com.sakute.project_fumo_backend.controller.exception.security.CustomAuthenticationEntryPoint;
 import com.sakute.project_fumo_backend.infrastructure.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +35,8 @@ public class SecurityConfig {
     private final LogoutHandler logoutHandler;
     private final AuthenticationProvider authenticationProvider;
     private final JwtFilter jwtFilter;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -55,6 +59,10 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
                 )
 
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

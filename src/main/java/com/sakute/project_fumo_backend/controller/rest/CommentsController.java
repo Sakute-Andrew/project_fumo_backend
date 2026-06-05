@@ -45,7 +45,6 @@ public class CommentsController {
         return ResponseEntity.noContent().build();
     }
 
-
     // --- ПУБЛІЧНА ЧАСТИНА ---
 
     @GetMapping("/{postId}/comments")

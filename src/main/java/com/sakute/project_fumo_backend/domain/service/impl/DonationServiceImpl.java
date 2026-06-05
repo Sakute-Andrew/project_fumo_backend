@@ -169,9 +169,15 @@ public class DonationServiceImpl extends ServiceGeneric<Donation, UUID> implemen
     }
 
     private DonorDisplayDto mapToDonorDisplay(Donation donation) {
-        String displayName = donation.getIsAnonymous() || donation.getDonor().getFullName() == null
-                ? "Анонім"
-                : maskName(donation.getDonor().getFullName());
+        String displayName;
+        if (Boolean.TRUE.equals(donation.getIsAnonymous()) || donation.getDonor() == null) {
+            displayName = "Анонім";
+        } else {
+            String fullName = donation.getDonor().getFullName();
+            displayName = (fullName != null && !fullName.isBlank())
+                    ? fullName
+                    : donation.getDonor().getUsername();
+        }
 
         return new DonorDisplayDto(
                 displayName,
@@ -197,12 +203,5 @@ public class DonationServiceImpl extends ServiceGeneric<Donation, UUID> implemen
                 .map(this::mapToDonorDisplay)
                 .collect(Collectors.toList());
     }
-
-    private String maskName(String name) {
-        if (name == null || name.length() <= 2) return "Анонім";
-        return name.charAt(0) + "***" + name.charAt(name.length() - 1);
-    }
-
-
 
 }

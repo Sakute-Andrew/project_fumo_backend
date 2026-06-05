@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class FundraisingMapper { // Використовуємо abstract class, щоб додати логіку
 
-    @Mapping(source = "category.id", target = "category")
+    @Mapping(source = "category.categoryName", target = "category")
     @Mapping(source = "description", target = "description", qualifiedByName = "truncateText")
     @Mapping(target = "progressPercentage", ignore = true)
     @Mapping(target = "daysLeft", ignore = true)
@@ -15,7 +15,7 @@ public abstract class FundraisingMapper { // Використовуємо abstra
 
     @Mapping(source = "owner.fullName", target = "userName") // Це залишаємо для красивого відображення
     @Mapping(source = "owner.username", target = "ownerUsername")// було userId.fullName
-    @Mapping(source = "category.id", target = "category")   // додай це
+    @Mapping(source = "category.categoryName", target = "category")
     @Mapping(target = "progressPercentage", ignore = true)
     @Mapping(target = "daysLeft", ignore = true)
     @Mapping(target = "isActive", ignore = true)

@@ -2,7 +2,6 @@ package com.sakute.project_fumo_backend.domain.dto.user;
 
 import com.sakute.project_fumo_backend.domain.enteties.user.Permission;
 import com.sakute.project_fumo_backend.domain.enteties.user.Role;
-import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,16 +25,4 @@ public class AdminUserDto {
     private String profilePicture;
     private String bio;
     private Timestamp createdAt;
-
-    public static AdminUserDto fromEntity(User user) {
-        return AdminUserDto.builder()
-                .userId(user.getUserId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .fullName(user.getFullName())
-                .role(user.getRole())
-                .permissions(user.getPermissions())
-                .createdAt(user.getCreatedAt())
-                .build();
-    }
 }

@@ -14,9 +14,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface FundraisingRepository  extends JpaRepository<Fundraising, UUID> {
+public interface FundraisingRepository extends JpaRepository<Fundraising, UUID> {
 
     List<Fundraising> findByOwnerUserIdAndStatus(UUID userId, Fundraising.Status status);
+
+    long countByStatus(Fundraising.Status status);
 
     // Пошук за категорією
     Page<Fundraising> findByCategory_Id(Long categoryId, Pageable pageable);

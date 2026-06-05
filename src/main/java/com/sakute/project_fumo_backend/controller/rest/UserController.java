@@ -1,16 +1,17 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
-import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
 import com.sakute.project_fumo_backend.domain.dto.user.AdminUserDto;
 import com.sakute.project_fumo_backend.domain.enteties.user.Permission;
-import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import com.sakute.project_fumo_backend.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,8 +28,13 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AdminUserDto>> getUserList() {
-        return userService.findAllUsers();
+    public ResponseEntity<Page<AdminUserDto>> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return ResponseEntity.ok(userService.getAllUsers(pageable, search));
     }
 
     @PutMapping("/{id}")
@@ -40,7 +46,6 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/permissions")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updatePermissions(
             @PathVariable UUID userId,
             @RequestBody Set<Permission> permissions) {
@@ -52,7 +57,4 @@ public class UserController {
     public ResponseEntity<Void> deleteUserById(@PathVariable UUID id) {
         return userService.deleteById(id);
     }
-
-
-
 }

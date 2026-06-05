@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,26 +52,22 @@ public class CommentServiceImpl extends ServiceGeneric<Comment, Long> implements
     @Transactional
     public boolean createComment(CommentDto commentDto) {
         try {
-            // Конвертуємо DTO в entity
             Comment comment = commentDtoMapper.toEntity(commentDto);
 
-            // Завантажуємо користувача з бази даних
-            User user = userRepository.findUserByUserId(commentDto.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found with ID: " + commentDto.getUserId()));
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
             UserPost post = userPostRepository.findByUserPostId(commentDto.getUserPostId())
-                            .orElseThrow(()-> new RuntimeException("Post not found with ID: " + commentDto.getUserPostId().toString() + ""));
+                    .orElseThrow(() -> new RuntimeException("Post not found with ID: " + commentDto.getUserPostId()));
 
             comment.setPost(post);
             comment.setAuthor(user);
 
-            // Зберігаємо коментар
-            Comment savedComment = commentRepository.save(comment);
-
+            commentRepository.save(comment);
             return true;
         } catch (Exception e) {
-            System.err.println("Error creating comment: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error creating comment: {}", e.getMessage());
             return false;
         }
     }

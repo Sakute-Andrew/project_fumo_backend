@@ -64,10 +64,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new InvalidInputException("Неправильний пароль");
         }
 
-        if (user == null) {
-            throw new NotFoundException("Об'єкт користувача порожній!");
-        }
-
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -164,10 +160,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .user(AuthUserDto.builder()
-                        .id(user.getUserId())
+                        .userId(user.getUserId())
                         .username(user.getUsername())
                         .email(user.getEmail())
-                        .userRole(user.getRole())
+                        .role(user.getRole())
                         .permissions(user.getPermissions())
                         .build())
                 .build();

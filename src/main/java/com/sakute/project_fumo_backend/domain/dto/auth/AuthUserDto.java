@@ -1,9 +1,7 @@
 package com.sakute.project_fumo_backend.domain.dto.auth;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sakute.project_fumo_backend.domain.enteties.user.Permission;
 import com.sakute.project_fumo_backend.domain.enteties.user.Role;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,15 +13,9 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class AuthUserDto {
-    @JsonProperty("userId")
-    private UUID id;
-    @JsonProperty("username")
+    private UUID userId;
     private String username;
-    @Email
-    @JsonProperty("email")
     private String email;
-    @JsonProperty("role")
-    private Role userRole;
-    @JsonProperty("permissions")
+    private Role role;
     private Set<Permission> permissions;
 }

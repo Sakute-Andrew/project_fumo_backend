@@ -10,5 +10,8 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface PayoutRequestRepository extends JpaRepository<PayoutRequest, UUID> {
-    long countByStatus(RequestStatus pending);
+    long countByStatus(RequestStatus status);
+
+    @Query("SELECT COALESCE(SUM(p.amount), 0) FROM PayoutRequest p WHERE p.status = :status")
+    BigDecimal sumAmountByStatus(@Param("status") RequestStatus status);
 }
