@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -19,15 +19,15 @@ public class UserPostDto {
     private UUID id;
 
     @NotBlank(message = "Post header can not be empty")
-    @Size(max = 300, message = "Maximum characters used")
+    @Size(max = 5238, message = "Maximum characters used") 
     private String postHeader;
 
     @NotBlank(message = "Post text can not be empty")
     private String postBody;
 
-    private String postDescription;
+    private String postText;
 
-    private Timestamp createdAt;
+    private Date postDate;
 
     @NotNull(message = "You must select topic of post")
     private PostTopicDto postTopic;

@@ -14,13 +14,14 @@ import java.util.List;
 public interface CommentMapper {
 
     @Mapping(target = "id", source = "commentId")
-    @Mapping(target = "user", source = "author")           // було userId
+    @Mapping(target = "user", source = "author")          
     CommentResponseDto toResponseDto(Comment comment);
 
     @Mapping(target = "commentId", ignore = true)
-    @Mapping(target = "author", ignore = true)             // було userId
-    @Mapping(target = "post", ignore = true)               // додай це
-    @Mapping(target = "createdAt", expression = "java(java.sql.Timestamp.from(java.time.Instant.now()))")
+    @Mapping(target = "author", ignore = true)             
+    @Mapping(target = "post", ignore = true)               
+    @Mapping(target = "createdAt", 
+             expression = "java(java.sql.Timestamp.from(java.time.Instant.now()))")
     Comment toEntity(CommentDto dto);
 
     @Mapping(target = "userPostId", source = "post.userPostId")

@@ -13,10 +13,8 @@ import java.util.UUID;
 
 public interface DonationRepository extends JpaRepository<Donation, UUID> {
 
-    // Spring зрозуміє це як: зайти в поле fundraising і взяти його id
     List<Donation> findByFundraising_Id(UUID fundraisingId);
 
-    // У Query ми звертаємось до поля-об'єкта d.fundraising
     @Query("SELECT d FROM Donation d WHERE d.fundraising.id = ?1 ORDER BY d.amount DESC")
     List<Donation> findTopDonorsByFundraisingId(UUID fundraisingId);
 
