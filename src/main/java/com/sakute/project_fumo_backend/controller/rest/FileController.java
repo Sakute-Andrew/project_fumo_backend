@@ -1,6 +1,6 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
-import com.sakute.project_fumo_backend.domain.service.impl.FileService;
+import com.sakute.project_fumo_backend.domain.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URLConnection;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/files")

@@ -2,7 +2,7 @@ package com.sakute.project_fumo_backend.controller.rest;
 
 import com.sakute.project_fumo_backend.domain.dto.PayoutRequestDto;
 import com.sakute.project_fumo_backend.domain.enteties.RequestStatus;
-import com.sakute.project_fumo_backend.domain.service.impl.PayoutRequestService;
+import com.sakute.project_fumo_backend.domain.service.PayoutRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/payouts") // Без api/v1
+@RequestMapping("api/v1/payouts")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')") // Тільки адміни мають доступ до цієї секції
 public class PayoutRequestController {

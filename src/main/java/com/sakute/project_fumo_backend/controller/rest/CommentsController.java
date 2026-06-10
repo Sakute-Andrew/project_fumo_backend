@@ -3,9 +3,7 @@ package com.sakute.project_fumo_backend.controller.rest;
 import com.sakute.project_fumo_backend.domain.dto.comment.CommentDto;
 import com.sakute.project_fumo_backend.domain.dto.comment.CommentResponseDto;
 import com.sakute.project_fumo_backend.domain.service.CommentService;
-import com.sakute.project_fumo_backend.domain.service.impl.CommentServiceImpl;
-import com.sakute.project_fumo_backend.repository.jpa_repo.UserPostRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,14 +18,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1")
+@RequiredArgsConstructor
 public class CommentsController {
 
     private final CommentService commentService;
-
-    @Autowired
-    public CommentsController(CommentService commentService, UserPostRepository userPostRepository) {
-        this.commentService = commentService;
-    }
 
     @GetMapping("/comments")
     @PreAuthorize("hasRole('ADMIN')")
@@ -55,9 +49,7 @@ public class CommentsController {
     @PostMapping("/comment")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Void> createComment(@RequestBody @Validated CommentDto comment) {
-        if(!commentService.createComment(comment)){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        commentService.createComment(comment);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

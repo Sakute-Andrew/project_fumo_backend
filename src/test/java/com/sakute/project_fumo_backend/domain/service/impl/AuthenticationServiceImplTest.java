@@ -6,11 +6,14 @@ import com.sakute.project_fumo_backend.controller.exception.OperationNotAllowedE
 import com.sakute.project_fumo_backend.domain.dto.auth.AuthenticationDto;
 import com.sakute.project_fumo_backend.domain.dto.auth.LoginRequest;
 import com.sakute.project_fumo_backend.domain.dto.auth.RegisterRequest;
+import com.sakute.project_fumo_backend.domain.dto.auth.RegistrationResponse;
 import com.sakute.project_fumo_backend.domain.enteties.Token;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import com.sakute.project_fumo_backend.domain.enteties.user.UserProfiles;
 import com.sakute.project_fumo_backend.domain.service.auth.AuthenticationServiceImpl;
+import com.sakute.project_fumo_backend.domain.service.email.EmailService;
 import com.sakute.project_fumo_backend.domain.service.jwt.JwtService;
+import com.sakute.project_fumo_backend.repository.jpa_repo.EmailConfirmationTokenRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.TokenRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserProfilesRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
@@ -19,7 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -36,10 +38,11 @@ class AuthenticationServiceImplTest {
 
     @Mock private UserRepository userRepository;
     @Mock private TokenRepository tokenRepository;
+    @Mock private EmailConfirmationTokenRepository confirmationTokenRepository;
     @Mock private JwtService jwtService;
     @Mock private PasswordEncoder passwordEncoder;
-    @Mock private AuthenticationManager authenticationManager;
     @Mock private UserProfilesRepository userProfilesRepository;
+    @Mock private EmailService emailService;
 
     @InjectMocks
     private AuthenticationServiceImpl authService;
@@ -88,7 +91,7 @@ class AuthenticationServiceImplTest {
     @Test
     void login_shouldThrow_whenPasswordIncorrect() {
         LoginRequest request = loginRequest("user@test.com", "wrong");
-        User user = userWithPassword("encodedPassword");
+        User user = userWithPassword();
 
         when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("wrong", "encodedPassword")).thenReturn(false);
@@ -101,7 +104,7 @@ class AuthenticationServiceImplTest {
     @Test
     void login_shouldReturnTokens_whenCredentialsCorrect() {
         LoginRequest request = loginRequest("user@test.com", "correct");
-        User user = userWithPassword("encodedPassword");
+        User user = userWithPassword();
 
         when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("correct", "encodedPassword")).thenReturn(true);
@@ -119,7 +122,7 @@ class AuthenticationServiceImplTest {
     @Test
     void login_shouldRevokeExistingTokens_whenUserLogsIn() {
         LoginRequest request = loginRequest("user@test.com", "correct");
-        User user = userWithPassword("encodedPassword");
+        User user = userWithPassword();
         Token existingToken = new Token();
 
         when(userRepository.findByEmail("user@test.com")).thenReturn(Optional.of(user));
@@ -170,19 +173,20 @@ class AuthenticationServiceImplTest {
 
         User savedUser = new User();
         savedUser.setUsername("newuser");
+        savedUser.setEmail("new@test.com");
 
         when(userRepository.existsByEmail("new@test.com")).thenReturn(false);
         when(userRepository.existsByUsername("newuser")).thenReturn(false);
         when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
-        when(jwtService.generateToken(savedUser)).thenReturn("access-token");
-        when(jwtService.generateRefreshToken(savedUser)).thenReturn("refresh-token");
-        when(tokenRepository.save(any())).thenReturn(new Token());
 
-        AuthenticationDto result = authService.register(request);
+        RegistrationResponse result = authService.register(request);
 
-        assertThat(result.getAccessToken()).isEqualTo("access-token");
+        assertThat(result.getMessage()).contains("Реєстрація успішна");
+        assertThat(result.getEmail()).isEqualTo("new@test.com");
         verify(userProfilesRepository).save(any(UserProfiles.class));
+        verify(confirmationTokenRepository).save(any());
+        verify(emailService).sendConfirmationEmail(any(), any(), any());
     }
 
     // -------------------------------------------------------
@@ -273,9 +277,9 @@ class AuthenticationServiceImplTest {
         return r;
     }
 
-    private User userWithPassword(String encodedPassword) {
+    private User userWithPassword() {
         User user = new User();
-        user.setPassword(encodedPassword);
+        user.setPassword("encodedPassword");
         return user;
     }
 }

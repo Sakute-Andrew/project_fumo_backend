@@ -1,9 +1,8 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sakute.project_fumo_backend.controller.exception.InvalidInputException;
-import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
 import com.sakute.project_fumo_backend.domain.dto.auth.AuthenticationDto;
+import com.sakute.project_fumo_backend.domain.dto.auth.RegistrationResponse;
 import com.sakute.project_fumo_backend.domain.service.auth.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,6 @@ class AuthControllerTest {
     private AuthenticationService authService;
 
     private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
@@ -42,7 +40,7 @@ class AuthControllerTest {
                 .setValidator(validator)
                 .build();
 
-        objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
     }
 
     // -------------------------------------------------------
@@ -116,10 +114,10 @@ class AuthControllerTest {
 
     @Test
     void register_shouldReturn201_whenDataIsValid() throws Exception {
-        AuthenticationDto response = AuthenticationDto.builder()
-                .accessToken("access-token")
-                .refreshToken("refresh-token")
-                .build();
+        RegistrationResponse response = new RegistrationResponse(
+                "Реєстрація успішна! Перевірте свою пошту та підтвердіть email.",
+                "newuser@test.com"
+        );
 
         when(authService.register(any())).thenReturn(response);
 
@@ -134,7 +132,8 @@ class AuthControllerTest {
                                 }
                                 """))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.access_token").value("access-token"));
+                .andExpect(jsonPath("$.message").value("Реєстрація успішна! Перевірте свою пошту та підтвердіть email."))
+                .andExpect(jsonPath("$.email").value("newuser@test.com"));
     }
 
     @Test

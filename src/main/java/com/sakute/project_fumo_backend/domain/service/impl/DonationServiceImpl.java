@@ -1,14 +1,15 @@
 package com.sakute.project_fumo_backend.domain.service.impl;
 
+import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
 import com.sakute.project_fumo_backend.domain.ServiceGeneric;
 import com.sakute.project_fumo_backend.domain.dto.donation.*;
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.*;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import com.sakute.project_fumo_backend.domain.service.DonationService;
+import com.sakute.project_fumo_backend.domain.service.email.EmailService;
 import com.sakute.project_fumo_backend.repository.jpa_repo.DonationRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingRepository;
-import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,74 +30,68 @@ import java.util.stream.Collectors;
 public class DonationServiceImpl extends ServiceGeneric<Donation, UUID> implements DonationService  {
 
     private final DonationRepository donationRepository;
-
     private final FundraisingRepository fundraisingRepository;
-
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    public DonationServiceImpl(DonationRepository donationRepository, FundraisingRepository fundraisingRepository, UserRepository userRepository) {
+    public DonationServiceImpl(DonationRepository donationRepository,
+                               FundraisingRepository fundraisingRepository,
+                               UserRepository userRepository,
+                               EmailService emailService) {
         super(donationRepository);
         this.donationRepository = donationRepository;
         this.fundraisingRepository = fundraisingRepository;
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
     public DonationResponse processMockDonation(DonationRequest request) {
-        try {
-            // Валідація
-            if (request.getAmount().compareTo(BigDecimal.valueOf(10)) < 0) {
-                return new DonationResponse(false, "Мінімальна сума донату 10 грн", null);
-            }
-
-            if (request.getAmount().compareTo(BigDecimal.valueOf(50000)) > 0) {
-                return new DonationResponse(false, "Максимальна сума донату 50000 грн", null);
-            }
-
-            // Перевірка існування фандрейзингу
-            Fundraising fundraising = fundraisingRepository.findById(request.getFundraisingId())
-                    .orElseThrow(() -> new RuntimeException("Фандрейзинг не знайдено"));
-
-            // Перевірка чи не закінчився фандрейзинг
-            if (fundraising.getEndDate().before(new Timestamp(System.currentTimeMillis()))) {
-                return new DonationResponse(false, "Термін збору коштів завершено", null);
-            }
-
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            log.info("DEBUG: User from token is -> {}", username);
-
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new NotFoundException("User Not Found"));
-
-
-            // Імітація обробки платежу
-            Thread.sleep(1500); // Імітація затримки платіжної системи
-
-            // Створення донату
-            Donation donation = new Donation();
-            donation.setFundraising(fundraising);
-            donation.setAmount(request.getAmount());
-            donation.setDonor(user);
-            donation.setTransactionId("MOCK_" + System.currentTimeMillis());
-            donation.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-            donation.setIsAnonymous(request.getIsAnonymous());// Або інший статус, який очікує твоя база
-
-            // Збереження донату
-            donation = donationRepository.save(donation);
-
-            fundraisingRepository.save(fundraising);
-
-            return new DonationResponse(
-                    true,
-                    "Донат успішно оброблено! Дякуємо за підтримку!",
-                    donation.getTransactionId()
-            );
-
-        } catch (InterruptedException e) {
-            return new DonationResponse(false, "Помилка обробки платежу", null);
-        } catch (Exception e) {
-            return new DonationResponse(false, "Внутрішня помилка сервера", null);
+        if (request.getAmount().compareTo(BigDecimal.valueOf(10)) < 0) {
+            return new DonationResponse(false, "Мінімальна сума донату 10 грн", null);
         }
+        if (request.getAmount().compareTo(BigDecimal.valueOf(50000)) > 0) {
+            return new DonationResponse(false, "Максимальна сума донату 50000 грн", null);
+        }
+
+        Fundraising fundraising = fundraisingRepository.findById(request.getFundraisingId())
+                .orElseThrow(() -> new NotFoundException("Фандрейзинг не знайдено"));
+
+        if (fundraising.getEndDate().before(new Timestamp(System.currentTimeMillis()))) {
+            return new DonationResponse(false, "Термін збору коштів завершено", null);
+        }
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Користувача не знайдено: " + username));
+
+        Donation donation = new Donation();
+        donation.setFundraising(fundraising);
+        donation.setAmount(request.getAmount());
+        donation.setDonor(user);
+        donation.setTransactionId("MOCK_" + System.currentTimeMillis());
+        donation.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        donation.setIsAnonymous(request.getIsAnonymous());
+
+        donation = donationRepository.save(donation);
+
+        User owner = fundraising.getOwner();
+        if (owner != null && owner.isEmailVerified()
+                && !owner.getUsername().equals(user.getUsername())) {
+            String donorDisplay = Boolean.TRUE.equals(request.getIsAnonymous())
+                    ? "Анонімний донатор"
+                    : (user.getFullName() != null && !user.getFullName().isBlank()
+                        ? user.getFullName() : user.getUsername());
+            emailService.sendDonationNotification(
+                    owner.getEmail(),
+                    owner.getUsername(),
+                    fundraising.getTitle(),
+                    donorDisplay,
+                    request.getAmount()
+            );
+        }
+
+        return new DonationResponse(true, "Донат успішно оброблено! Дякуємо за підтримку!", donation.getTransactionId());
     }
 
     @Transactional(readOnly = true)

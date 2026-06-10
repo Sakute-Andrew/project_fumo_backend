@@ -35,7 +35,7 @@ public class Donation {
     private Boolean isAnonymous;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User donor;  // назва відображає роль
 
     @ManyToOne(fetch = FetchType.LAZY)

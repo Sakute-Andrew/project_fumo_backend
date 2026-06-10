@@ -1,7 +1,7 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
 import com.sakute.project_fumo_backend.domain.dto.PermissionRequestDto;
-import com.sakute.project_fumo_backend.domain.service.impl.PermissionRequestService;
+import com.sakute.project_fumo_backend.domain.service.PermissionRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

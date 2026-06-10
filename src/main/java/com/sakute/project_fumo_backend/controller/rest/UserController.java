@@ -3,7 +3,7 @@ package com.sakute.project_fumo_backend.controller.rest;
 import com.sakute.project_fumo_backend.domain.dto.user.AdminUserDto;
 import com.sakute.project_fumo_backend.domain.enteties.user.Permission;
 import com.sakute.project_fumo_backend.domain.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,14 +18,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("api/v1/user")
 @PreAuthorize("hasRole('ADMIN')")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     public ResponseEntity<Page<AdminUserDto>> getUsers(

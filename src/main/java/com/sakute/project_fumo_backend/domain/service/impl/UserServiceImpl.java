@@ -7,6 +7,7 @@ import com.sakute.project_fumo_backend.domain.dto.user.UserMapper;
 import com.sakute.project_fumo_backend.domain.enteties.user.Permission;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import com.sakute.project_fumo_backend.domain.service.UserService;
+import com.sakute.project_fumo_backend.repository.jpa_repo.DonationRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,12 +26,15 @@ public class UserServiceImpl extends ServiceGeneric<User, UUID> implements UserS
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final DonationRepository donationRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper,
+                           DonationRepository donationRepository) {
         super(userRepository);
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.donationRepository = donationRepository;
     }
 
     @Override
@@ -56,19 +60,21 @@ public class UserServiceImpl extends ServiceGeneric<User, UUID> implements UserS
     @Override
     public void updatePermissions(UUID userId, Set<Permission> permissions) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Користувача не знайдено"));
         user.setPermissions(permissions);
         userRepository.save(user);
     }
 
+    @Transactional
     public ResponseEntity<Void> deleteById(UUID id) {
+        donationRepository.nullifyDonorByUserId(id);
         userRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     public ResponseEntity<AdminUserDto> updateUser(UUID id, AdminUserDto dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Користувача не знайдено"));
         user.setEmail(dto.getEmail());
         user.setFullName(dto.getFullName());
         user.setRole(dto.getRole());

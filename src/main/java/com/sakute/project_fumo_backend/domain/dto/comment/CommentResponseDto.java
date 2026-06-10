@@ -4,6 +4,7 @@ import com.sakute.project_fumo_backend.domain.dto.user.UserDto;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 public class CommentResponseDto {
@@ -11,4 +12,6 @@ public class CommentResponseDto {
     private String content;
     private UserDto user;
     private Timestamp createdAt;
+    private Long parentCommentId;
+    private List<CommentResponseDto> replies;
 }

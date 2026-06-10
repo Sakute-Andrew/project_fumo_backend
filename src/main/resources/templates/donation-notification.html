@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+        .logo-wrap { background: #fff; padding: 24px 32px; text-align: center; }
+        .header { background: #16a34a; padding: 28px 32px; }
+        .header h1 { color: #fff; margin: 0; font-size: 20px; }
+        .body { padding: 32px; color: #333; }
+        .body p { line-height: 1.6; }
+        .amount-box { text-align: center; background: #f0fdf4; border: 2px solid #16a34a; border-radius: 8px; padding: 20px; margin: 24px 0; }
+        .amount-box .amount { font-size: 32px; font-weight: bold; color: #16a34a; }
+        .amount-box .donor { font-size: 14px; color: #555; margin-top: 4px; }
+        .footer { padding: 16px 32px; background: #f9f9f9; color: #888; font-size: 12px; text-align: center; }
+    </style>
+    <title></title>
+</head>
+<body>
+<div class="container">
+    <div class="logo-wrap">
+        <img src="cid:logo" alt="Project FUMO" width="200" style="display:block;margin:0 auto;"/>
+    </div>
+    <div class="header">
+        <h1>Новий донат!</h1>
+    </div>
+    <div class="body">
+        <p>Привіт, <strong th:text="${fundraiserUsername}">Збирач</strong>!</p>
+        <p>Ваш збір <strong th:text="${fundraisingTitle}">Назва збору</strong> отримав новий донат:</p>
+        <div class="amount-box">
+            <div class="amount"><span th:text="${#numbers.formatDecimal(amount, 1, 'COMMA', 0, 'POINT')}">0</span> грн</div>
+            <div class="donor">від: <span th:text="${donorDisplay}">Донатор</span></div>
+        </div>
+        <p>Дякуємо вашим підтримувачам разом з вами!</p>
+    </div>
+    <div class="footer">
+        <p>Ви отримали цей лист, оскільки є власником збору коштів.</p>
+    </div>
+</div>
+</body>
+</html>

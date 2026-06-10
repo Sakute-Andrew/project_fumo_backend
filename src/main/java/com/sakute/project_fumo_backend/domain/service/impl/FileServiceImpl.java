@@ -1,5 +1,7 @@
 package com.sakute.project_fumo_backend.domain.service.impl;
 
+import com.sakute.project_fumo_backend.domain.service.FileService;
+import com.sakute.project_fumo_backend.controller.exception.InvalidInputException;
 import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
-public class FileService {
+public class FileServiceImpl implements FileService {
 
     private static final Set<String> IMAGE_EXT = Set.of("jpg", "jpeg", "png", "webp", "gif");
     private static final Set<String> DOC_EXT = Set.of("pdf", "docx", "xlsx", "txt");
@@ -31,7 +33,7 @@ public class FileService {
         } else if (DOC_EXT.contains(ext)) {
             subfolder = "documents";
         } else {
-            throw new IllegalArgumentException("Непідтримуваний тип файлу: " + ext);
+            throw new InvalidInputException("Непідтримуваний тип файлу: " + ext);
         }
 
         String fileName = UUID.randomUUID() + "." + ext;

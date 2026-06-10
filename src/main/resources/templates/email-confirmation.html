@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+        .logo-wrap { background: #fff; padding: 24px 32px; text-align: center; }
+        .header { background: #4f46e5; padding: 32px; text-align: center; }
+        .header h1 { color: #fff; margin: 0; font-size: 24px; }
+        .body { padding: 32px; color: #333; }
+        .body p { line-height: 1.6; }
+        .btn { display: inline-block; margin: 24px 0; padding: 14px 32px; background: #4f46e5; color: #fff; text-decoration: none; border-radius: 6px; font-size: 16px; }
+        .footer { padding: 16px 32px; background: #f9f9f9; color: #888; font-size: 12px; text-align: center; }
+    </style>
+    <title></title>
+</head>
+<body>
+<div class="container">
+    <div class="logo-wrap">
+        <img src="cid:logo" alt="Project FUMO" width="200" style="display:block;margin:0 auto;"/>
+    </div>
+    <div class="header">
+        <h1>Ласкаво просимо!</h1>
+    </div>
+    <div class="body">
+        <p>Привіт, <strong th:text="${username}">Користувач</strong>!</p>
+        <p>Дякуємо за реєстрацію. Будь ласка, підтвердіть свою електронну адресу, натиснувши на кнопку нижче:</p>
+        <a th:href="${confirmationLink}" class="btn">Підтвердити email</a>
+        <p>Посилання діє протягом <strong>24 годин</strong>.</p>
+        <p>Якщо ви не реєструвалися — просто проігноруйте цей лист.</p>
+    </div>
+    <div class="footer">
+        <p>Якщо кнопка не працює, скопіюйте це посилання в браузер:</p>
+        <p th:text="${confirmationLink}"></p>
+    </div>
+</div>
+</body>
+</html>

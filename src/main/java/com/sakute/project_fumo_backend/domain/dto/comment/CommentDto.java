@@ -8,4 +8,5 @@ import java.util.UUID;
 public class CommentDto {
     private String content;
     private UUID userPostId;
+    private Long parentCommentId;
 }

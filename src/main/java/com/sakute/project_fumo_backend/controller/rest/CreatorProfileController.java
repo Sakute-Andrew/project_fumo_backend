@@ -3,9 +3,10 @@ package com.sakute.project_fumo_backend.controller.rest;
 import com.sakute.project_fumo_backend.domain.dto.user_profile.CreatorProfileDTO;
 import com.sakute.project_fumo_backend.domain.dto.user_profile.UpdateProfileRequest;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
-import com.sakute.project_fumo_backend.domain.service.impl.CreatorProfileService;
+import com.sakute.project_fumo_backend.domain.service.CreatorProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class CreatorProfileController {
     }
 
     @PutMapping("/profile")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> updateProfile(
             @RequestBody UpdateProfileRequest request,
             @AuthenticationPrincipal User user

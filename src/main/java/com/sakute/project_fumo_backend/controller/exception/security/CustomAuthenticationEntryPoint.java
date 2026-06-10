@@ -31,8 +31,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", 401);
-        body.put("error", "Unauthorized");
-        body.put("message", "Authentication is required to access this resource");
+        body.put("error", "Не авторизовано");
+        body.put("message", "Для доступу необхідна автентифікація");
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");

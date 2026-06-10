@@ -1,12 +1,12 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
+import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingCategoryDto;
 import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingDto;
 import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingListDto;
-import com.sakute.project_fumo_backend.domain.enteties.fundraising.FundraisingCategory;
-import com.sakute.project_fumo_backend.domain.service.impl.FundraisingService;
+import com.sakute.project_fumo_backend.domain.service.FundraisingService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,10 +22,10 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/fundraising")
+@RequiredArgsConstructor
 public class FundraisingController {
 
-    @Autowired
-    private FundraisingService fundraisingService;
+    private final FundraisingService fundraisingService;
 
     @GetMapping
     public ResponseEntity<Page<FundraisingListDto>> getAllFundraising(
@@ -36,27 +36,17 @@ public class FundraisingController {
             @RequestParam(required = false) String search) {
 
         Pageable pageable = createPageable(page, size, sortBy);
-
-        Page<FundraisingListDto> fundraisings = fundraisingService
-                .getAllFundraising(pageable, category, search);
-
-        return ResponseEntity.ok(fundraisings);
+        return ResponseEntity.ok(fundraisingService.getAllFundraising(pageable, category, search));
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<List<FundraisingCategory>> getAllCategories() {
+    public ResponseEntity<List<FundraisingCategoryDto>> getAllCategories() {
         return ResponseEntity.ok(fundraisingService.getCategories());
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<FundraisingDto> getFundraisingById(@PathVariable UUID id) {
-        try {
-            FundraisingDto fundraising = fundraisingService.getFundraisingById(id);
-            return ResponseEntity.ok(fundraising);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(fundraisingService.getFundraisingById(id));
     }
 
     @GetMapping("/active")
@@ -66,9 +56,7 @@ public class FundraisingController {
             @RequestParam(defaultValue = "recent") String sortBy) {
 
         Pageable pageable = createPageable(page, size, sortBy);
-        Page<FundraisingListDto> fundraising = fundraisingService.getActiveFundraising(pageable);
-
-        return ResponseEntity.ok(fundraising);
+        return ResponseEntity.ok(fundraisingService.getActiveFundraising(pageable));
     }
 
     @GetMapping("/popular")
@@ -77,9 +65,7 @@ public class FundraisingController {
             @RequestParam(defaultValue = "12") int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("donorCount").descending());
-        Page<FundraisingListDto> fundraising = fundraisingService.getPopularFundraisings(pageable);
-
-        return ResponseEntity.ok(fundraising);
+        return ResponseEntity.ok(fundraisingService.getPopularFundraisings(pageable));
     }
 
     @GetMapping("/ending-soon")
@@ -88,79 +74,44 @@ public class FundraisingController {
             @RequestParam(defaultValue = "12") int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("endDate").ascending());
-        Page<FundraisingListDto> fundraising = fundraisingService.getEndingSoonFundraising(pageable);
-
-        return ResponseEntity.ok(fundraising);
+        return ResponseEntity.ok(fundraisingService.getEndingSoonFundraising(pageable));
     }
-
 
     @PostMapping
     public ResponseEntity<FundraisingDto> createFundraising(@Valid @RequestBody FundraisingDto createDto) {
-        try {
-            FundraisingDto createdFundraising = fundraisingService.createFundraising(createDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdFundraising);
-        } catch (RuntimeException e) {
-            log.error("Помилка створення фандрейзингу: {}", e.getMessage(), e);
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(fundraisingService.createFundraising(createDto));
     }
 
-    // Оновлення існуючого фандрейзингу
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @fundraisingService.isFundraisingOwner(#id, authentication.name)")
+    @PreAuthorize("hasRole('ADMIN') or @fundraisingServiceImpl.isFundraisingOwner(#id, authentication.name)")
     public ResponseEntity<FundraisingDto> updateFundraising(
             @PathVariable UUID id,
             @Valid @RequestBody FundraisingDto updateDto) {
-        try {
-            FundraisingDto updatedFundraising = fundraisingService.updateFundraising(id, updateDto);
-            return ResponseEntity.ok(updatedFundraising);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(fundraisingService.updateFundraising(id, updateDto));
     }
 
-    // Видалення фандрейзингу
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @fundraisingService.isFundraisingOwner(#id, authentication.name)")
+    @PreAuthorize("hasRole('ADMIN') or @fundraisingServiceImpl.isFundraisingOwner(#id, authentication.name)")
     public ResponseEntity<Void> deleteFundraising(@PathVariable UUID id) {
-        try {
-            fundraisingService.deleteFundraising(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        fundraisingService.deleteFundraising(id);
+        return ResponseEntity.noContent().build();
     }
-
-    // Часткове оновлення фандрейзингу (PATCH)
-    // У твоєму FundraisingController
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @fundraisingService.isFundraisingOwner(#id, authentication.name)")
+    @PreAuthorize("hasRole('ADMIN') or @fundraisingServiceImpl.isFundraisingOwner(#id, authentication.name)")
     public ResponseEntity<FundraisingDto> partialUpdate(
             @PathVariable UUID id,
-            @RequestBody FundraisingDto updateDto) { // Тут можна без @Valid, бо поля можуть бути null
-
-        // ВИПРАВЛЕНО: викликаємо універсальний метод updateFundraising
+            @RequestBody FundraisingDto updateDto) {
         return ResponseEntity.ok(fundraisingService.updateFundraising(id, updateDto));
     }
 
     private Pageable createPageable(int page, int size, String sortBy) {
-        Sort sort;
-        switch (sortBy) {
-            case "ending":
-                sort = Sort.by("endDate").ascending();
-                break;
-            case "popular":
-                sort = Sort.by("donorCount").descending();
-                break;
-            case "amount":
-                sort = Sort.by("currentAmount").descending();
-                break;
-            case "recent":
-            default:
-                sort = Sort.by("createdAt").descending();
-                break;
-        }
+        Sort sort = switch (sortBy) {
+            case "ending" -> Sort.by("endDate").ascending();
+            case "popular" -> Sort.by("donorCount").descending();
+            case "amount" -> Sort.by("currentAmount").descending();
+            default -> Sort.by("createdAt").descending();
+        };
         return PageRequest.of(page, size, sort);
     }
 }

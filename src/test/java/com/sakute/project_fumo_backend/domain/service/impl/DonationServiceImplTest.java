@@ -7,6 +7,7 @@ import com.sakute.project_fumo_backend.domain.dto.donation.DonorDisplayDto;
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.Donation;
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.Fundraising;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.domain.service.email.EmailService;
 import com.sakute.project_fumo_backend.repository.jpa_repo.DonationRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
@@ -34,12 +35,13 @@ class DonationServiceImplTest {
     @Mock private DonationRepository donationRepository;
     @Mock private FundraisingRepository fundraisingRepository;
     @Mock private UserRepository userRepository;
+    @Mock private EmailService emailService;
 
     private DonationServiceImpl donationService;
 
     @BeforeEach
     void setUp() {
-        donationService = new DonationServiceImpl(donationRepository, fundraisingRepository, userRepository);
+        donationService = new DonationServiceImpl(donationRepository, fundraisingRepository, userRepository, emailService);
     }
 
     // -------------------------------------------------------
@@ -144,23 +146,23 @@ class DonationServiceImplTest {
     void getDonors_shouldShowFullName_forNonAnonymousDonor() {
         UUID id = UUID.randomUUID();
         when(donationRepository.findByFundraising_IdOrderByCreatedAtDesc(id))
-                .thenReturn(List.of(donationWithUser("Andrii Doe", false)));
+                .thenReturn(List.of(donationWithUser(false)));
 
         List<DonorDisplayDto> donors = donationService.getDonors(id);
 
         assertThat(donors).hasSize(1);
-        assertThat(donors.get(0).getDisplayName()).isEqualTo("Andrii Doe");
+        assertThat(donors.getFirst().getDisplayName()).isEqualTo("Andrii Doe");
     }
 
     @Test
     void getDonors_shouldReturnAnonim_forAnonymousDonor() {
         UUID id = UUID.randomUUID();
         when(donationRepository.findByFundraising_IdOrderByCreatedAtDesc(id))
-                .thenReturn(List.of(donationWithUser("Andrii Doe", true)));
+                .thenReturn(List.of(donationWithUser(true)));
 
         List<DonorDisplayDto> donors = donationService.getDonors(id);
 
-        assertThat(donors.get(0).getDisplayName()).isEqualTo("Анонім");
+        assertThat(donors.getFirst().getDisplayName()).isEqualTo("Анонім");
     }
 
     @Test
@@ -175,7 +177,7 @@ class DonationServiceImplTest {
 
         List<DonorDisplayDto> donors = donationService.getDonors(id);
 
-        assertThat(donors.get(0).getDisplayName()).isEqualTo("andrii_doe");
+        assertThat(donors.getFirst().getDisplayName()).isEqualTo("andrii_doe");
     }
 
     @Test
@@ -188,7 +190,7 @@ class DonationServiceImplTest {
 
         List<DonorDisplayDto> donors = donationService.getDonors(id);
 
-        assertThat(donors.get(0).getDisplayName()).isEqualTo("Анонім");
+        assertThat(donors.getFirst().getDisplayName()).isEqualTo("Анонім");
     }
 
     // -------------------------------------------------------
@@ -275,9 +277,9 @@ class DonationServiceImplTest {
         return d;
     }
 
-    private Donation donationWithUser(String fullName, boolean anonymous) {
+    private Donation donationWithUser(boolean anonymous) {
         Donation d = donation(new BigDecimal("100.00"));
-        d.setDonor(user(fullName));
+        d.setDonor(user("Andrii Doe"));
         d.setIsAnonymous(anonymous);
         return d;
     }

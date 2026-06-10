@@ -8,12 +8,12 @@ import com.sakute.project_fumo_backend.domain.dto.comment.CommentResponseDto;
 import com.sakute.project_fumo_backend.domain.enteties.post.UserPost;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import com.sakute.project_fumo_backend.domain.service.CommentService;
+import com.sakute.project_fumo_backend.domain.service.email.EmailService;
 import com.sakute.project_fumo_backend.repository.jpa_repo.CommentRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserPostRepository;
-import javassist.NotFoundException;
+import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,45 +31,68 @@ public class CommentServiceImpl extends ServiceGeneric<Comment, Long> implements
     private final CommentMapper commentDtoMapper;
     private final UserRepository userRepository;
     private final UserPostRepository userPostRepository;
+    private final EmailService emailService;
 
-    @Autowired
-    protected CommentServiceImpl(CommentRepository commentRepository,
-                                 CommentMapper commentDtoMapper,
-                                 UserRepository userRepository, UserPostRepository userPostRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository,
+                              CommentMapper commentDtoMapper,
+                              UserRepository userRepository,
+                              UserPostRepository userPostRepository,
+                              EmailService emailService) {
         super(commentRepository);
         this.commentRepository = commentRepository;
         this.commentDtoMapper = commentDtoMapper;
         this.userRepository = userRepository;
         this.userPostRepository = userPostRepository;
+        this.emailService = emailService;
     }
 
     @Transactional(readOnly = true)
     public List<CommentResponseDto> findByCommentId(UUID postId) {
-        List<Comment> comments = commentRepository.findByPost_UserPostId(postId);
+        List<Comment> comments = commentRepository.findByPost_UserPostIdAndParentCommentIsNull(postId);
         return commentDtoMapper.toResponseDtoList(comments);
     }
 
     @Transactional
-    public boolean createComment(CommentDto commentDto) {
-        try {
-            Comment comment = commentDtoMapper.toEntity(commentDto);
+    public void createComment(CommentDto commentDto) {
+        Comment comment = commentDtoMapper.toEntity(commentDto);
 
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("User not found: " + username));
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User author = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Користувача не знайдено: " + username));
 
-            UserPost post = userPostRepository.findByUserPostId(commentDto.getUserPostId())
-                    .orElseThrow(() -> new RuntimeException("Post not found with ID: " + commentDto.getUserPostId()));
+        UserPost post = userPostRepository.findByUserPostId(commentDto.getUserPostId())
+                .orElseThrow(() -> new NotFoundException("Пост не знайдено з ID: " + commentDto.getUserPostId()));
 
-            comment.setPost(post);
-            comment.setAuthor(user);
+        comment.setPost(post);
+        comment.setAuthor(author);
 
-            commentRepository.save(comment);
-            return true;
-        } catch (Exception e) {
-            log.error("Error creating comment: {}", e.getMessage());
-            return false;
+        if (commentDto.getParentCommentId() != null) {
+            Comment parent = commentRepository.findById(commentDto.getParentCommentId())
+                    .orElseThrow(() -> new NotFoundException("Батьківський коментар не знайдено: " + commentDto.getParentCommentId()));
+            comment.setParentComment(parent);
+
+            User parentAuthor = parent.getAuthor();
+            log.info("Reply notification check: replier={}, parentAuthor={}, emailVerified={}",
+                    username, parentAuthor.getUsername(), parentAuthor.isEmailVerified());
+
+            if (!parentAuthor.getUsername().equals(username) && parentAuthor.isEmailVerified()) {
+                log.info("Sending reply notification to {}", parentAuthor.getEmail());
+                emailService.sendCommentReplyNotification(
+                        parentAuthor.getEmail(),
+                        parentAuthor.getUsername(),
+                        author.getUsername(),
+                        post.getPostHeader(),
+                        commentDto.getContent()
+                );
+            } else {
+                log.info("Reply notification skipped: sameUser={}, emailVerified={}",
+                        parentAuthor.getUsername().equals(username), parentAuthor.isEmailVerified());
+            }
+        } else {
+            log.info("No parentCommentId — top-level comment, no notification sent");
         }
+
+        commentRepository.save(comment);
     }
 
     @Transactional
@@ -81,9 +104,9 @@ public class CommentServiceImpl extends ServiceGeneric<Comment, Long> implements
         return deletedCount > 0;
     }
 
-    public boolean isCommentAuthor(Long commentId, String username) throws NotFoundException {
+    public boolean isCommentAuthor(Long commentId, String username) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NotFoundException("Comment not found"));
+                .orElseThrow(() -> new NotFoundException("Коментар не знайдено"));
         return comment.getAuthor().getUsername().equals(username);
     }
 

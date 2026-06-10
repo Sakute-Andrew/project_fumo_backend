@@ -31,8 +31,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", 403);
-        body.put("error", "Forbidden");
-        body.put("message", "You do not have permission to access this resource");
+        body.put("error", "Заборонено");
+        body.put("message", "У вас немає доступу до цього ресурсу");
 
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");

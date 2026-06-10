@@ -1,5 +1,7 @@
 package com.sakute.project_fumo_backend.domain.service.impl;
 
+import com.sakute.project_fumo_backend.domain.service.PermissionRequestService;
+import com.sakute.project_fumo_backend.controller.exception.InvalidInputException;
 import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
 
 import com.sakute.project_fumo_backend.domain.dto.PermissionRequestDto;
@@ -19,7 +21,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class PermissionRequestService {
+public class PermissionRequestServiceImpl implements PermissionRequestService {
 
     private final PermissionRequestRepository requestRepository;
     private final UserRepository userRepository;
@@ -27,18 +29,17 @@ public class PermissionRequestService {
     // Створення заявки КОРИСТУВАЧЕМ
     @Transactional
     public PermissionRequestDto createRequest(String username, PermissionRequestDto dto) {
-        System.out.println("Looking for email: " + username);
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Користувача не знайдено"));
 
         // Якщо юзер вже має це право — відмова
         if (user.getPermissions().contains(dto.getRequestedPermission())) {
-            throw new IllegalStateException("Ви вже маєте цей дозвіл");
+            throw new InvalidInputException("Ви вже маєте цей дозвіл");
         }
 
         // Якщо вже є заявка в очікуванні — відмова
         if (requestRepository.existsByUser_UserIdAndRequestedPermissionAndStatus(user.getUserId(), dto.getRequestedPermission(), RequestStatus.PENDING)) {
-            throw new IllegalStateException("Ваша попередня заявка ще розглядається");
+            throw new InvalidInputException("Ваша попередня заявка ще розглядається");
         }
 
         PermissionRequest request = new PermissionRequest();
@@ -66,7 +67,7 @@ public class PermissionRequestService {
         request.setStatus(status);
 
         User user = userRepository.findById(request.getUser().getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Користувача не знайдено"));
 
         if (RequestStatus.APPROVED.equals(status)) {
             user.getPermissions().add(request.getRequestedPermission());

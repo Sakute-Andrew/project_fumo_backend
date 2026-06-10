@@ -2,8 +2,9 @@ package com.sakute.project_fumo_backend.domain.service.impl;
 
 import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
 import com.sakute.project_fumo_backend.domain.ServiceGeneric;
-import com.sakute.project_fumo_backend.domain.dto.post.UserPostDto;
 import com.sakute.project_fumo_backend.domain.dto.post.PostMapper;
+import com.sakute.project_fumo_backend.domain.dto.post.PostTopicDto;
+import com.sakute.project_fumo_backend.domain.dto.post.UserPostDto;
 import com.sakute.project_fumo_backend.domain.enteties.post.PostTagTopic;
 import com.sakute.project_fumo_backend.domain.enteties.post.UserPost;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
@@ -46,12 +47,6 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
                 .orElseThrow(() -> new NotFoundException("Пост з ID " + id + " не знайдено")));
     }
 
-    // Пошук за заголовком
-    public UserPostDto findByTitle(String title) {
-        return postMapper.toDto(postRepository.findByPostHeader(title)
-                .orElseThrow(() -> new NotFoundException("Пост з заголовком '" + title + "' не знайдено")));
-    }
-
     @Transactional(readOnly = true)
     public Page<UserPostDto> findAll(String name, Long topicId, Pageable pageable) {
         Specification<UserPost> spec = Specification
@@ -82,13 +77,11 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
     }
 
     @Override
-    public Page<UserPostDto> findAll(String name, Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public List<PostTagTopic> getPostTagTopic() {
-        return postTagTopicRepository.findAll();
+    public List<PostTopicDto> getPostTagTopic() {
+        return postTagTopicRepository.findAll()
+                .stream()
+                .map(t -> new PostTopicDto(t.getPostTopicId(), t.getPostName()))
+                .toList();
     }
 
 
@@ -114,6 +107,10 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
             throw new NotFoundException("Пост з ID " + id + " не знайдено");
         }
         postRepository.deleteByUserPostId(id);
+    }
+
+    public boolean isPostOwner(UUID postId, String username) {
+        return postRepository.isPostOwnerByUsername(postId, username);
     }
 
     // Збереження нового поста

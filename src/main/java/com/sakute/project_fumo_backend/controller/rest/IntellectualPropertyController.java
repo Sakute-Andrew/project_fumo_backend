@@ -1,8 +1,8 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
+import com.sakute.project_fumo_backend.domain.dto.int_prop.IntellectualPropertyCategoryDto;
 import com.sakute.project_fumo_backend.domain.dto.int_prop.IntellectualPropertyDto;
-import com.sakute.project_fumo_backend.domain.enteties.intprop.IntellectualPropertyCategory;
-import com.sakute.project_fumo_backend.domain.service.impl.IntellectualPropertyServiceImpl;
+import com.sakute.project_fumo_backend.domain.service.IntellectualPropertyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @Validated
 public class IntellectualPropertyController {
 
-    private final IntellectualPropertyServiceImpl intellectualPropertyService;
+    private final IntellectualPropertyService intellectualPropertyService;
 
     // Отримати список всіх IP з пагінацією
     @GetMapping
@@ -50,19 +50,20 @@ public class IntellectualPropertyController {
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<List<IntellectualPropertyCategory>> getCategories() {
+    public ResponseEntity<List<IntellectualPropertyCategoryDto>> getCategories() {
         return ResponseEntity.ok(intellectualPropertyService.getAllCategories());
     }
 
-
     @PostMapping("/categories")
-    public ResponseEntity<IntellectualPropertyCategory> сreateCategory(@Valid @RequestBody IntellectualPropertyCategory category) {
-        return ResponseEntity.ok(intellectualPropertyService.createCategory(category));
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<IntellectualPropertyCategoryDto> createCategory(@Valid @RequestBody IntellectualPropertyCategoryDto dto) {
+        return ResponseEntity.ok(intellectualPropertyService.createCategory(dto));
     }
 
     @PutMapping("/categories")
-    public ResponseEntity<IntellectualPropertyCategory> updateCategory(@Valid @RequestBody IntellectualPropertyCategory category) {
-        return ResponseEntity.ok(intellectualPropertyService.createCategory(category));
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<IntellectualPropertyCategoryDto> updateCategory(@Valid @RequestBody IntellectualPropertyCategoryDto dto) {
+        return ResponseEntity.ok(intellectualPropertyService.createCategory(dto));
     }
 
     @DeleteMapping("/categories/{id}")

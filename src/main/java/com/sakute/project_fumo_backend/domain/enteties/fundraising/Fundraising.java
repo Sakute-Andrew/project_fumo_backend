@@ -1,10 +1,12 @@
 package com.sakute.project_fumo_backend.domain.enteties.fundraising;
 
+import com.sakute.project_fumo_backend.domain.enteties.PayoutRequest;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -55,7 +57,12 @@ public class Fundraising {
     private FundraisingCategory category;  // не два маппінги
 
     @OneToMany(mappedBy = "fundraising", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Donation> donations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "fundraising", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<PayoutRequest> payoutRequests = new ArrayList<>();
 
     public enum Status {
         ACTIVE, COMPLETED, ARCHIVED

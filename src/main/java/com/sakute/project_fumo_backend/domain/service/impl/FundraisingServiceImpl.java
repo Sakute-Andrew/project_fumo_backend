@@ -1,18 +1,18 @@
 package com.sakute.project_fumo_backend.domain.service.impl;
 
+import com.sakute.project_fumo_backend.domain.service.FundraisingService;
 import com.sakute.project_fumo_backend.controller.exception.InvalidInputException;
 import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
 import com.sakute.project_fumo_backend.controller.exception.OperationNotAllowedException;
+import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingCategoryDto;
 import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingDto;
 import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingListDto;
 import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingMapper;
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.Fundraising;
-import com.sakute.project_fumo_backend.domain.enteties.fundraising.FundraisingCategory;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingCategoryRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
-import jdk.dynalink.linker.LinkerServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +27,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor // Замінює твій ручний конструктор
-public class FundraisingService {
+public class FundraisingServiceImpl implements FundraisingService {
 
     private final UserRepository userRepository;
     private final FundraisingCategoryRepository fundraisingCategoryRepository;
@@ -55,8 +55,11 @@ public class FundraisingService {
         return fundraising.map(fundraisingMapper::toListDto);
     }
 
-    public List<FundraisingCategory> getCategories(){
-        return fundraisingCategoryRepository.findAll();
+    public List<FundraisingCategoryDto> getCategories() {
+        return fundraisingCategoryRepository.findAll()
+                .stream()
+                .map(c -> new FundraisingCategoryDto(c.getId(), c.getCategoryName()))
+                .toList();
     }
 
     public Page<FundraisingListDto> getPopularFundraisings(Pageable pageable) {
@@ -99,7 +102,7 @@ public class FundraisingService {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User owner = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Користувача не знайдено"));
         fundraising.setOwner(owner);
 
         return fundraisingMapper.toDto(fundraisingRepository.save(fundraising));
@@ -151,9 +154,6 @@ public class FundraisingService {
     }
 
     private void checkEditPermissions(Fundraising fundraising) {
-        // if (!fundraising.getUserId().equals(getCurrentUser())) {
-        //     throw new OperationNotAllowedException("Немає прав для редагування");
-        // }
         if (fundraising.getEndDate().before(new Timestamp(System.currentTimeMillis()))) {
             throw new OperationNotAllowedException("Неможливо редагувати завершений фандрейзинг");
         }

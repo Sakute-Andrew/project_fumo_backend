@@ -1,7 +1,6 @@
 package com.sakute.project_fumo_backend.repository.jpa_repo;
 
 import com.sakute.project_fumo_backend.domain.enteties.Comment;
-import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,10 +13,8 @@ import java.util.UUID;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    List<Comment> findByAuthor(User author);
-
-    // Звертаємось до поля userPostId всередині об'єкта post
-    List<Comment> findByPost_UserPostId(UUID postId);
+    // Top-level comments only (no parent) with their replies
+    List<Comment> findByPost_UserPostIdAndParentCommentIsNull(UUID postId);
 
     // Кастомний запит для видалення (найшвидший варіант)
     @Modifying

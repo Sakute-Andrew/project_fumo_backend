@@ -1,8 +1,9 @@
 package com.sakute.project_fumo_backend.domain.service.impl;
 
-import com.sakute.project_fumo_backend.controller.exception.NotAuthorizedException;
-import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
+import com.sakute.project_fumo_backend.domain.service.IntellectualPropertyService;
 import com.sakute.project_fumo_backend.controller.exception.OperationNotAllowedException;
+import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
+import com.sakute.project_fumo_backend.domain.dto.int_prop.IntellectualPropertyCategoryDto;
 import com.sakute.project_fumo_backend.domain.dto.int_prop.IntellectualPropertyDto;
 import com.sakute.project_fumo_backend.domain.dto.int_prop.IntellectualPropertyMapper;
 import com.sakute.project_fumo_backend.domain.enteties.intprop.IntellectualProperty;
@@ -17,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class IntellectualPropertyServiceImpl {
+public class IntellectualPropertyServiceImpl implements IntellectualPropertyService {
 
     private final IntellectualPropertyRepository intellectualPropertyRepository;
     private final IntellectualPropertyCategoryRepository categoryRepository;
@@ -62,7 +62,7 @@ public class IntellectualPropertyServiceImpl {
     @Transactional(readOnly = true)
     public IntellectualPropertyDto findById(UUID id) {
         IntellectualProperty entity = intellectualPropertyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Intellectual Property not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Об'єкт інтелектуальної власності не знайдено: " + id));
         return mapper.toDto(entity);
     }
 
@@ -78,8 +78,11 @@ public class IntellectualPropertyServiceImpl {
         return entities.stream().map(mapper::toDto).toList();
     }
 
-    public List<IntellectualPropertyCategory> getAllCategories(){
-         return categoryRepository.findAll();
+    public List<IntellectualPropertyCategoryDto> getAllCategories() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(c -> new IntellectualPropertyCategoryDto(c.getCategoryId(), c.getCategoryName()))
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -95,7 +98,7 @@ public class IntellectualPropertyServiceImpl {
         // Встановлюємо поточного користувача як власника
         String currentUsername = getCurrentUsername();
         User owner = userRepository.findByUsername(currentUsername)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + currentUsername));
+                .orElseThrow(() -> new NotFoundException("Користувача не знайдено: " + currentUsername));
         entity.setOwner(owner);
 
         // Встановлюємо час створення та початковий статус
@@ -107,8 +110,12 @@ public class IntellectualPropertyServiceImpl {
     }
 
     @Transactional
-    public IntellectualPropertyCategory createCategory(IntellectualPropertyCategory category){
-        return categoryRepository.save(category);
+    public IntellectualPropertyCategoryDto createCategory(IntellectualPropertyCategoryDto dto) {
+        IntellectualPropertyCategory category = new IntellectualPropertyCategory();
+        category.setCategoryId(dto.getCategoryId());
+        category.setCategoryName(dto.getCategoryName());
+        IntellectualPropertyCategory saved = categoryRepository.save(category);
+        return new IntellectualPropertyCategoryDto(saved.getCategoryId(), saved.getCategoryName());
     }
 
     @Transactional
@@ -118,7 +125,7 @@ public class IntellectualPropertyServiceImpl {
 
     public IntellectualPropertyDto update(UUID id, IntellectualPropertyDto dto) {
         IntellectualProperty existing = intellectualPropertyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Intellectual Property not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Об'єкт інтелектуальної власності не знайдено: " + id));
 
         // Перевіряємо права доступу
         if (!isOwner(id) && !isAdmin()) {
@@ -137,10 +144,10 @@ public class IntellectualPropertyServiceImpl {
 
     public void delete(UUID id) {
         IntellectualProperty entity = intellectualPropertyRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Intellectual Property not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Об'єкт інтелектуальної власності не знайдено: " + id));
 
         if (!isOwner(id) && !isAdmin()) {
-            throw new NotAuthorizedException("You don't have permission to delete this intellectual property");
+            throw new OperationNotAllowedException("У вас немає прав для видалення цього об'єкта інтелектуальної власності");
         }
 
         intellectualPropertyRepository.delete(entity);
@@ -148,7 +155,7 @@ public class IntellectualPropertyServiceImpl {
 
     public IntellectualPropertyDto changeStatus(UUID id, String statusStr) {
         IntellectualProperty entity = intellectualPropertyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Intellectual Property not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Об'єкт інтелектуальної власності не знайдено: " + id));
 
         IpStatus status = IpStatus.valueOf(statusStr.toUpperCase());
         entity.setStatus(status);

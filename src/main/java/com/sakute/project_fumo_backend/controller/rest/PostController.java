@@ -1,14 +1,11 @@
 package com.sakute.project_fumo_backend.controller.rest;
 
 import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
+import com.sakute.project_fumo_backend.domain.dto.post.PostTopicDto;
 import com.sakute.project_fumo_backend.domain.dto.post.UserPostDto;
-import com.sakute.project_fumo_backend.domain.enteties.post.PostTagTopic;
-import com.sakute.project_fumo_backend.domain.service.CommentService;
 import com.sakute.project_fumo_backend.domain.service.PostService;
-import com.sakute.project_fumo_backend.domain.service.impl.CommentServiceImpl;
-import com.sakute.project_fumo_backend.domain.service.impl.PostServiceImpl;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -21,14 +18,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/posts")
+@RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
-
-    @Autowired
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
 
     // Отримання всіх постів з підтримкою пагінації та пошуку
     @GetMapping
@@ -54,21 +47,21 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or @postServiceImpl.isPostOwner(#id, authentication.name)")
     public ResponseEntity<?> updatePost(@PathVariable UUID id, @Valid @RequestBody UserPostDto post) {
         var updatedPost = postService.update(id, post);
         return ResponseEntity.ok(updatedPost);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or @postServiceImpl.isPostOwner(#id, authentication.name)")
     public ResponseEntity<?> deletePost(@PathVariable UUID id) {
         postService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/topics")
-    public ResponseEntity<List<PostTagTopic>> getTopics() {
+    public ResponseEntity<List<PostTopicDto>> getTopics() {
         return ResponseEntity.ok(postService.getPostTagTopic());
     }
 }

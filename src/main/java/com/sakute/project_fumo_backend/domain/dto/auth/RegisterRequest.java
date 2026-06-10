@@ -17,24 +17,24 @@ import lombok.NoArgsConstructor;
 public class RegisterRequest {
 
     @JsonProperty("username")
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 30, message = "Username must be 3 characters min and 30 max")
+    @NotBlank(message = "Ім'я користувача є обов'язковим")
+    @Size(min = 3, max = 30, message = "Ім'я користувача повинно бути від 3 до 30 символів")
     private String username;
 
     @JsonProperty("full_name")
-    @NotBlank(message = "Fullname is required")
-    @Size(min = 3, max = 30, message = "Fullname must be 3 characters min and 30 max")
+    @NotBlank(message = "Повне ім'я є обов'язковим")
+    @Size(min = 3, max = 30, message = "Повне ім'я повинно бути від 3 до 30 символів")
     private String fullName;
 
     @JsonProperty("email")
-    @NotBlank(message = "E-mail is required")
-    @Email(message = "The email is invalid format")
+    @NotBlank(message = "Email є обов'язковим")
+    @Email(message = "Некоректний формат email")
     private String email;
 
     @JsonProperty("password")
-    @NotBlank(message = "The password is required.")
+    @NotBlank(message = "Пароль є обов'язковим")
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!*()]).{8,}$",
-            message = "Password must be 8 characters long and combination of uppercase letters, lowercase letters, numbers, special characters.")
+            message = "Пароль повинен містити щонайменше 8 символів, великі та малі літери, цифри та спеціальні символи")
     private String password;
 
 }
