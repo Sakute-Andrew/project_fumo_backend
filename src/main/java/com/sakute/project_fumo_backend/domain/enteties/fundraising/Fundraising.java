@@ -29,7 +29,7 @@ public class Fundraising {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 5238)
     private String description;
 
     @Column(name = "goal_amount", nullable = false)

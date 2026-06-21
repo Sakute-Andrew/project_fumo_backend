@@ -5,10 +5,12 @@ import com.sakute.project_fumo_backend.domain.enteties.RequestStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface PermissionRequestService {
     PermissionRequestDto createRequest(String username, PermissionRequestDto dto);
     Page<PermissionRequestDto> getAll(Pageable pageable);
     PermissionRequestDto updateStatus(UUID id, RequestStatus status);
+    List<PermissionRequestDto> getMyRequests(String username);
 }

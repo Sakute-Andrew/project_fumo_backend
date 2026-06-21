@@ -55,7 +55,10 @@ public class DonationServiceImpl extends ServiceGeneric<Donation, UUID> implemen
         }
 
         Fundraising fundraising = fundraisingRepository.findById(request.getFundraisingId())
-                .orElseThrow(() -> new NotFoundException("Фандрейзинг не знайдено"));
+                .orElse(null);
+        if (fundraising == null) {
+            return new DonationResponse(false, "Фандрейзинг не знайдено", null);
+        }
 
         if (fundraising.getEndDate().before(new Timestamp(System.currentTimeMillis()))) {
             return new DonationResponse(false, "Термін збору коштів завершено", null);

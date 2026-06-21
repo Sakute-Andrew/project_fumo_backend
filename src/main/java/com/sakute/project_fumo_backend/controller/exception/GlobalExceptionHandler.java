@@ -3,6 +3,7 @@ package com.sakute.project_fumo_backend.controller.exception;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -61,6 +62,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleDisabled(DisabledException ex) {
         log.warn("Login attempt for unverified account: {}", ex.getMessage());
         return buildResponse(HttpStatus.FORBIDDEN, "Будь ласка, підтвердіть свою електронну адресу перед входом.");
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Object> handleDataIntegrity(DataIntegrityViolationException ex) {
+        log.warn("Data integrity violation: {}", ex.getMessage());
+        return buildResponse(HttpStatus.CONFLICT, "Неможливо видалити: існують пов'язані записи. Спочатку видаліть або перемістіть їх.");
     }
 
     @ExceptionHandler(Exception.class)

@@ -1,5 +1,6 @@
 package com.sakute.project_fumo_backend.domain.service.impl;
 
+import com.sakute.project_fumo_backend.domain.service.FileService;
 import com.sakute.project_fumo_backend.domain.service.IntellectualPropertyService;
 import com.sakute.project_fumo_backend.controller.exception.OperationNotAllowedException;
 import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
@@ -36,6 +37,7 @@ public class IntellectualPropertyServiceImpl implements IntellectualPropertyServ
     private final IntellectualPropertyCategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final IntellectualPropertyMapper mapper;
+    private final FileService fileService;
 
     // Додай новий метод findAll з фільтрами
     @Transactional(readOnly = true)
@@ -138,6 +140,16 @@ public class IntellectualPropertyServiceImpl implements IntellectualPropertyServ
         existing.setTypeIp(dto.getTypeIp());
         existing.setFileIp(dto.getFileIp());
 
+        if (dto.getStatus() != null) {
+            existing.setStatus(IpStatus.valueOf(dto.getStatus().toUpperCase()));
+        }
+
+        if (dto.getCategoryId() != null) {
+            IntellectualPropertyCategory category = categoryRepository.findById(dto.getCategoryId())
+                    .orElseThrow(() -> new NotFoundException("Категорію не знайдено: " + dto.getCategoryId()));
+            existing.setIntellectualPropertyCategory(category);
+        }
+
         IntellectualProperty updated = intellectualPropertyRepository.save(existing);
         return mapper.toDto(updated);
     }
@@ -150,7 +162,9 @@ public class IntellectualPropertyServiceImpl implements IntellectualPropertyServ
             throw new OperationNotAllowedException("У вас немає прав для видалення цього об'єкта інтелектуальної власності");
         }
 
+        String fileUrl = entity.getFileIp();
         intellectualPropertyRepository.delete(entity);
+        fileService.deleteFile(fileUrl);
     }
 
     public IntellectualPropertyDto changeStatus(UUID id, String statusStr) {

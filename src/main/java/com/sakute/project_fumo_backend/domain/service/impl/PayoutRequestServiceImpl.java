@@ -9,6 +9,7 @@ import com.sakute.project_fumo_backend.domain.enteties.PayoutRequest;
 import com.sakute.project_fumo_backend.domain.enteties.RequestStatus;
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.Fundraising;
 import com.sakute.project_fumo_backend.repository.jpa_repo.*;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,10 +62,20 @@ public class PayoutRequestServiceImpl implements PayoutRequestService {
         Fundraising fundraising = fundraisingRepository.findById(dto.getFundraisingId())
                 .orElseThrow(() -> new NotFoundException("Фандрейзинг не знайдено"));
 
-        // Перевірка що є що виводити
-        BigDecimal available = donationRepository.sumByFundraisingId(fundraising.getId());
-        if (available == null || available.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new InvalidInputException("Немає коштів для виводу");
+        BigDecimal totalDonations = donationRepository.sumByFundraisingId(fundraising.getId());
+        if (totalDonations == null) totalDonations = BigDecimal.ZERO;
+
+        BigDecimal alreadyWithdrawn = payoutRepository.sumByFundraisingIdAndStatusIn(
+            fundraising.getId(), List.of(RequestStatus.PENDING, RequestStatus.APPROVED)
+        );
+        if (alreadyWithdrawn == null) alreadyWithdrawn = BigDecimal.ZERO;
+
+        BigDecimal available = totalDonations.subtract(alreadyWithdrawn);
+        if (available.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidInputException("Немає доступних коштів для виводу");
+        }
+        if (dto.getAmount() == null || dto.getAmount().compareTo(available) > 0) {
+            throw new InvalidInputException("Сума виводу перевищує доступну: " + available + " ₴");
         }
 
         PayoutRequest request = new PayoutRequest();

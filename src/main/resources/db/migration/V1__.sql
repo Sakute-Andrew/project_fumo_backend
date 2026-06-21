@@ -18,7 +18,7 @@ CREATE TABLE donations
     transaction_id VARCHAR(255),
     created_at     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     is_anonymous   BOOLEAN                     NOT NULL,
-    user_id        UUID                        NOT NULL,
+    user_id        UUID,
     fundraising_id UUID                        NOT NULL,
     CONSTRAINT pk_donations PRIMARY KEY (donation_id)
 );
@@ -38,7 +38,7 @@ CREATE TABLE fundraising
 (
     fundraising_id UUID                        NOT NULL,
     title          VARCHAR(255)                NOT NULL,
-    description    VARCHAR(255)                NOT NULL,
+    description    VARCHAR(5238)               NOT NULL,
     goal_amount    DECIMAL                     NOT NULL,
     start_date     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     end_date       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE intellectual_property
 (
     ip_id       UUID                        NOT NULL,
     name        VARCHAR(255)                NOT NULL,
-    description VARCHAR(255),
+    description VARCHAR(5238),
     type_ip     VARCHAR(255)                NOT NULL,
     created_at  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     file_ip     VARCHAR(255),

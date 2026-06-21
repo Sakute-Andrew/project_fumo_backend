@@ -20,7 +20,7 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.ok(fileService.upload(file));
     }

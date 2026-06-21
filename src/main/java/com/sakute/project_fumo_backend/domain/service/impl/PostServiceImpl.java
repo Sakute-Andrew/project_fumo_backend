@@ -8,6 +8,7 @@ import com.sakute.project_fumo_backend.domain.dto.post.UserPostDto;
 import com.sakute.project_fumo_backend.domain.enteties.post.PostTagTopic;
 import com.sakute.project_fumo_backend.domain.enteties.post.UserPost;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.domain.service.FileService;
 import com.sakute.project_fumo_backend.domain.service.PostService;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.PostTagTopicRepository;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,15 +33,16 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
     private final PostMapper postMapper;
     private final PostTagTopicRepository postTagTopicRepository;
     private final UserRepository userRepository;
+    private final FileService fileService;
 
     @Autowired
-    public PostServiceImpl(UserRepository userRepository,UserPostRepository postRepository, PostMapper postMapper, PostTagTopicRepository postTagTopicRepository) {
+    public PostServiceImpl(UserRepository userRepository, UserPostRepository postRepository, PostMapper postMapper, PostTagTopicRepository postTagTopicRepository, FileService fileService) {
         super(postRepository);
         this.postRepository = postRepository;
-
         this.postMapper = postMapper;
         this.postTagTopicRepository = postTagTopicRepository;
         this.userRepository = userRepository;
+        this.fileService = fileService;
     }
 
     @Transactional(readOnly = true)
@@ -48,10 +52,17 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
     }
 
     @Transactional(readOnly = true)
-    public Page<UserPostDto> findAll(String name, Long topicId, Pageable pageable) {
+    public UserPostDto findByTitle(String title) {
+        return postMapper.toDto(postRepository.findByPostHeader(title)
+                .orElseThrow(() -> new NotFoundException("Пост з заголовком \"" + title + "\" не знайдено")));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserPostDto> findAll(String name, Long topicId, String period, Pageable pageable) {
         Specification<UserPost> spec = Specification
                 .where(byName(name))
-                .and(byTopic(topicId));
+                .and(byTopic(topicId))
+                .and(byPeriod(period));
 
         Page<UserPost> page = postRepository.findAll(spec, pageable);
 
@@ -74,6 +85,19 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
         return topicId != null
                 ? (root, query, cb) -> cb.equal(root.get("topic").get("postTopicId"), topicId)
                 : null;
+    }
+
+    private Specification<UserPost> byPeriod(String period) {
+        if (period == null || period.isBlank() || period.equalsIgnoreCase("all")) return null;
+        Instant from = switch (period.toLowerCase()) {
+            case "today" -> Instant.now().truncatedTo(ChronoUnit.DAYS);
+            case "week"  -> Instant.now().minus(7, ChronoUnit.DAYS);
+            case "month" -> Instant.now().minus(30, ChronoUnit.DAYS);
+            default      -> null;
+        };
+        if (from == null) return null;
+        Timestamp ts = Timestamp.from(from);
+        return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("createdAt"), ts);
     }
 
     @Override
@@ -101,12 +125,13 @@ public class PostServiceImpl extends ServiceGeneric<UserPost, UUID> implements P
 
         return postMapper.toDto(postRepository.save(existingPost));
         }
-    // Видалення за ID
+    @Transactional
     public void deleteById(UUID id) {
-        if (!postRepository.existsByUserPostId(id)) {
-            throw new NotFoundException("Пост з ID " + id + " не знайдено");
-        }
-        postRepository.deleteByUserPostId(id);
+        UserPost post = postRepository.findByUserPostId(id)
+                .orElseThrow(() -> new NotFoundException("Пост з ID " + id + " не знайдено"));
+        String photo = post.getPhoto();
+        postRepository.delete(post);
+        fileService.deleteFile(photo);
     }
 
     public boolean isPostOwner(UUID postId, String username) {

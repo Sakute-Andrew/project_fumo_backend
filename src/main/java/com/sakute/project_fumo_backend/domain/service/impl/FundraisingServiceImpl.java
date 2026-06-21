@@ -10,8 +10,10 @@ import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingListDto
 import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingMapper;
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.Fundraising;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.domain.enteties.RequestStatus;
 import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingCategoryRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingRepository;
+import com.sakute.project_fumo_backend.repository.jpa_repo.PayoutRequestRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -33,26 +37,30 @@ public class FundraisingServiceImpl implements FundraisingService {
     private final FundraisingCategoryRepository fundraisingCategoryRepository;
     private final FundraisingRepository fundraisingRepository;
     private final FundraisingMapper fundraisingMapper;
+    private final PayoutRequestRepository payoutRequestRepository;
 
     // --- READ METODS ---
     @Transactional(readOnly = true)
     public Page<FundraisingListDto> getAllFundraising(Pageable pageable, Long category, String search) {
-        Page<Fundraising> fundraising;
+        Specification<Fundraising> spec = Specification
+                .where(byCategory(category))
+                .and(bySearch(search));
+        return fundraisingRepository.findAll(spec, pageable).map(fundraisingMapper::toListDto);
+    }
 
-        if (category != null && search != null && !search.isEmpty()) {
-            // Додали _Id
-            fundraising = fundraisingRepository.findByCategory_IdAndTitleContainingIgnoreCase(category, search, pageable);
-        } else if (category != null) {
-            // Додали _Id
-            fundraising = fundraisingRepository.findByCategory_Id(category, pageable);
-        } else if (search != null && !search.isEmpty()) {
-            fundraising = fundraisingRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(search, search, pageable);
-        } else {
-            fundraising = fundraisingRepository.findAll(pageable);
-        }
+    private Specification<Fundraising> byCategory(Long categoryId) {
+        return categoryId != null
+                ? (root, query, cb) -> cb.equal(root.get("category").get("id"), categoryId)
+                : null;
+    }
 
-        // ВИПРАВЛЕНО: Використовуємо мапер
-        return fundraising.map(fundraisingMapper::toListDto);
+    private Specification<Fundraising> bySearch(String search) {
+        if (search == null || search.isBlank()) return null;
+        String pattern = "%" + search.toLowerCase() + "%";
+        return (root, query, cb) -> cb.or(
+                cb.like(cb.lower(root.get("title")), pattern),
+                cb.like(cb.lower(root.get("description")), pattern)
+        );
     }
 
     public List<FundraisingCategoryDto> getCategories() {
@@ -70,7 +78,14 @@ public class FundraisingServiceImpl implements FundraisingService {
     @Transactional(readOnly = true)
     public FundraisingDto getFundraisingById(UUID id) {
         Fundraising fundraising = findByIdOrThrow(id);
-        return fundraisingMapper.toDto(fundraising);
+        FundraisingDto dto = fundraisingMapper.toDto(fundraising);
+
+        BigDecimal withdrawn = payoutRequestRepository.sumByFundraisingIdAndStatusIn(
+            id, List.of(RequestStatus.PENDING, RequestStatus.APPROVED)
+        );
+        dto.setWithdrawnAmount(withdrawn != null ? withdrawn : BigDecimal.ZERO);
+
+        return dto;
     }
 
     public Page<FundraisingListDto> getActiveFundraising(Pageable pageable) {
@@ -140,7 +155,7 @@ public class FundraisingServiceImpl implements FundraisingService {
         // checkDeletePermissions(fundraising);
 
         if (fundraising.getCurrentAmount().compareTo(BigDecimal.ZERO) > 0) {
-            throw new OperationNotAllowedException("Неможливо видалити фандрейзинг з донатами. Використайте деактивацію.");
+            throw new OperationNotAllowedException("Неможливо видалити фандрейзинг з донатами.");
         }
 
         fundraisingRepository.delete(fundraising);

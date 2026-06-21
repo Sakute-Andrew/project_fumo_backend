@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -43,5 +44,13 @@ public class PermissionRequestController {
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody PermissionRequestDto dto) {
         return ResponseEntity.ok(requestService.createRequest(userDetails.getUsername(), dto));
+    }
+
+    // Користувач переглядає свої заявки (для відображення статусу на фронтенді)
+    @GetMapping("/my")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<PermissionRequestDto>> getMyRequests(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(requestService.getMyRequests(userDetails.getUsername()));
     }
 }

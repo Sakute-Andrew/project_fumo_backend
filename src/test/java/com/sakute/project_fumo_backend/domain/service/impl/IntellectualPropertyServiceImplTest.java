@@ -1,6 +1,5 @@
 package com.sakute.project_fumo_backend.domain.service.impl;
 
-import com.sakute.project_fumo_backend.controller.exception.NotAuthorizedException;
 import com.sakute.project_fumo_backend.controller.exception.NotFoundException;
 import com.sakute.project_fumo_backend.controller.exception.OperationNotAllowedException;
 import com.sakute.project_fumo_backend.domain.dto.int_prop.IntellectualPropertyDto;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -65,7 +63,7 @@ class IntellectualPropertyServiceImplTest {
         when(ipRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> ipService.findById(id))
-                .isInstanceOf(ResourceNotFoundException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 
     // -------------------------------------------------------
@@ -105,7 +103,7 @@ class IntellectualPropertyServiceImplTest {
         mockSecurityContext("ghost", false);
 
         assertThatThrownBy(() -> ipService.create(dto))
-                .isInstanceOf(ResourceNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("ghost");
     }
 
@@ -119,7 +117,7 @@ class IntellectualPropertyServiceImplTest {
         when(ipRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> ipService.update(id, new IntellectualPropertyDto()))
-                .isInstanceOf(ResourceNotFoundException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 
     @Test
@@ -201,7 +199,7 @@ class IntellectualPropertyServiceImplTest {
         mockSecurityContext("stranger", false);
 
         assertThatThrownBy(() -> ipService.delete(id))
-                .isInstanceOf(NotAuthorizedException.class);
+                .isInstanceOf(OperationNotAllowedException.class);
     }
 
     @Test
@@ -229,7 +227,7 @@ class IntellectualPropertyServiceImplTest {
         when(ipRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> ipService.changeStatus(id, "AVAILABLE"))
-                .isInstanceOf(ResourceNotFoundException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 
     @Test

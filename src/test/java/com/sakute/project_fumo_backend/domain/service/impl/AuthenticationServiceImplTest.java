@@ -22,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -43,6 +44,7 @@ class AuthenticationServiceImplTest {
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private UserProfilesRepository userProfilesRepository;
     @Mock private EmailService emailService;
+    @Mock private AuthenticationManager authenticationManager;
 
     @InjectMocks
     private AuthenticationServiceImpl authService;
@@ -54,7 +56,7 @@ class AuthenticationServiceImplTest {
     @Test
     void login_shouldThrow_whenRequestIsNull() {
         assertThatThrownBy(() -> authService.login(null))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(InvalidInputException.class)
                 .hasMessageContaining("порожні");
     }
 
@@ -63,7 +65,7 @@ class AuthenticationServiceImplTest {
         LoginRequest request = loginRequest(null, "password");
 
         assertThatThrownBy(() -> authService.login(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidInputException.class);
     }
 
     @Test
@@ -71,7 +73,7 @@ class AuthenticationServiceImplTest {
         LoginRequest request = loginRequest("user@test.com", null);
 
         assertThatThrownBy(() -> authService.login(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidInputException.class);
     }
 
     // -------------------------------------------------------

@@ -13,7 +13,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class FileServiceImpl implements FileService {
 
@@ -48,6 +50,20 @@ public class FileServiceImpl implements FileService {
         Path path = Paths.get(storagePath, subfolder, fileName);
         if (!Files.exists(path)) throw new NotFoundException("Файл не знайдено: " + fileName);
         return Files.readAllBytes(path);
+    }
+
+    public void deleteFile(String fileUrl) {
+        if (fileUrl == null || fileUrl.isBlank()) return;
+        // URL format: /api/v1/files/{subfolder}/{fileName}
+        String prefix = "/api/v1/files/";
+        if (!fileUrl.startsWith(prefix)) return;
+        String relative = fileUrl.substring(prefix.length()); // "photos/UUID.jpg"
+        Path path = Paths.get(storagePath, relative);
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            log.warn("Could not delete file {}: {}", path, e.getMessage());
+        }
     }
 
     private String getExtension(String filename) {

@@ -30,7 +30,7 @@ public class UserPost {
     @Column(name = "post_description")
     private String postDescription;
 
-    @Column(name = "post_text", columnDefinition = "TEXT", length = 22555)
+    @Column(name = "post_text", columnDefinition = "TEXT", length = 5238)
     private String postText;
 
     @Column(name = "created_at", nullable = false)

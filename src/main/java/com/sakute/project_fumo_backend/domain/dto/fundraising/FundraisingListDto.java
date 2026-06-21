@@ -21,6 +21,8 @@ public class FundraisingListDto {
     private UUID id;
     @NotBlank(message = "Title is required")
     private String title;
+    private UUID ownerUserId;
+    private String ownerUsername;
 
     private String description;
 

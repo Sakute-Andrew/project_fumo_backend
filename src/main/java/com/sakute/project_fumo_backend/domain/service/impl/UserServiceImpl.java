@@ -29,8 +29,7 @@ public class UserServiceImpl extends ServiceGeneric<User, UUID> implements UserS
     private final DonationRepository donationRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper,
-                           DonationRepository donationRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, DonationRepository donationRepository) {
         super(userRepository);
         this.userRepository = userRepository;
         this.userMapper = userMapper;

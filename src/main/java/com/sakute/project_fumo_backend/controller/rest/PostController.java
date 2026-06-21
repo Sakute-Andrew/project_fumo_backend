@@ -28,8 +28,9 @@ public class PostController {
     public ResponseEntity<Page<UserPostDto>> getPosts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long topicId,
+            @RequestParam(required = false) String period,
             Pageable pageable) {
-        return ResponseEntity.ok(postService.findAll(name, topicId, pageable));
+        return ResponseEntity.ok(postService.findAll(name, topicId, period, pageable));
     }
 
     // Отримання конкретного поста за ID

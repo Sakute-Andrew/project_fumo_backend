@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 public interface PayoutRequestRepository extends JpaRepository<PayoutRequest, UUID> {
@@ -14,4 +15,7 @@ public interface PayoutRequestRepository extends JpaRepository<PayoutRequest, UU
 
     @Query("SELECT COALESCE(SUM(p.amount), 0) FROM PayoutRequest p WHERE p.status = :status")
     BigDecimal sumAmountByStatus(@Param("status") RequestStatus status);
+
+    @Query("SELECT COALESCE(SUM(p.amount), 0) FROM PayoutRequest p WHERE p.fundraising.id = :fundraisingId AND p.status IN :statuses")
+    BigDecimal sumByFundraisingIdAndStatusIn(@Param("fundraisingId") UUID fundraisingId, @Param("statuses") List<RequestStatus> statuses);
 }

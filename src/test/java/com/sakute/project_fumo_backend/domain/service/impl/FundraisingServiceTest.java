@@ -8,6 +8,7 @@ import com.sakute.project_fumo_backend.domain.dto.fundraising.FundraisingMapper;
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.Donation;
 import com.sakute.project_fumo_backend.domain.enteties.fundraising.Fundraising;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.domain.service.impl.FundraisingServiceImpl;
 import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingCategoryRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.FundraisingRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
@@ -42,7 +43,7 @@ class FundraisingServiceTest {
     @Mock private FundraisingMapper fundraisingMapper;
 
     @InjectMocks
-    private FundraisingService fundraisingService;
+    private FundraisingServiceImpl fundraisingService;
 
     // -------------------------------------------------------
     // getAllFundraising — routing

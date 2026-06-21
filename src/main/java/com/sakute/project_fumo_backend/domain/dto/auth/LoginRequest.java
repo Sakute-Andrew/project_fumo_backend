@@ -15,12 +15,12 @@ import lombok.NoArgsConstructor;
 public class LoginRequest {
 
     @JsonProperty("email")
-    @NotEmpty
-    @Email
+    @NotEmpty(message = "Email не може бути пустим")
+    @Email(message = "Email має бути правильного формату")
     private String email;
 
     @JsonProperty("password")
-    @NotEmpty
+    @NotEmpty(message = "Пароль не може бути порожнім")
     private String password;
 
 }

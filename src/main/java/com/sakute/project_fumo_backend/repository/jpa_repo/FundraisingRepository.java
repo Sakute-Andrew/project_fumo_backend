@@ -5,6 +5,7 @@ import com.sakute.project_fumo_backend.domain.enteties.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface FundraisingRepository extends JpaRepository<Fundraising, UUID> {
+public interface FundraisingRepository extends JpaRepository<Fundraising, UUID>, JpaSpecificationExecutor<Fundraising> {
 
     List<Fundraising> findByOwnerUserIdAndStatus(UUID userId, Fundraising.Status status);
 

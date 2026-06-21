@@ -18,8 +18,8 @@ public class UserPostDto {
 
     private UUID id;
 
-    @NotBlank(message = "Post header can not be empty")
-    @Size(max = 5238, message = "Maximum characters used")
+    @NotBlank(message = "Заголовок поста не може бути порожнім")
+    @Size(max = 5238, message = "Максимальна  кількість символів використана")
     private String postHeader;
 
     @NotBlank(message = "Post text can not be empty")

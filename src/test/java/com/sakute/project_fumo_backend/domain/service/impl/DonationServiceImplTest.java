@@ -239,7 +239,7 @@ class DonationServiceImplTest {
         when(donationRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> donationService.deleteDonation(id))
-                .isInstanceOf(javassist.NotFoundException.class);
+                .isInstanceOf(com.sakute.project_fumo_backend.controller.exception.NotFoundException.class);
     }
 
     @Test

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,4 +23,7 @@ public interface PermissionRequestRepository extends JpaRepository<PermissionReq
 
 
     long countByStatus(RequestStatus pending);
+
+    @EntityGraph(attributePaths = {"user"})
+    List<PermissionRequest> findByUser_UsernameOrderByCreatedAtDesc(String username);
 }

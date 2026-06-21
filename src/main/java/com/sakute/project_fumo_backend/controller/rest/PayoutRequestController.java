@@ -3,6 +3,7 @@ package com.sakute.project_fumo_backend.controller.rest;
 import com.sakute.project_fumo_backend.domain.dto.PayoutRequestDto;
 import com.sakute.project_fumo_backend.domain.enteties.RequestStatus;
 import com.sakute.project_fumo_backend.domain.service.PayoutRequestService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +35,7 @@ public class PayoutRequestController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<PayoutRequestDto> create(@RequestBody PayoutRequestDto dto) {
+    public ResponseEntity<PayoutRequestDto> create(@Valid @RequestBody PayoutRequestDto dto) {
         return ResponseEntity.ok(payoutService.create(dto));
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -88,6 +89,14 @@ public class PermissionRequestServiceImpl implements PermissionRequestService {
         dto.setMessage(entity.getMessage());
         dto.setCreatedAt(entity.getCreatedAt());
         return dto;
+    }
+
+    @Transactional(readOnly = true)
+    public List<PermissionRequestDto> getMyRequests(String username) {
+        return requestRepository.findByUser_UsernameOrderByCreatedAtDesc(username)
+                .stream()
+                .map(this::toDto)
+                .toList();
     }
 
     private PermissionRequestDto toDtoWithUser(PermissionRequest entity, User user) {

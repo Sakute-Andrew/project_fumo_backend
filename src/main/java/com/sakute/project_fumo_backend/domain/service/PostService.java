@@ -11,9 +11,10 @@ import java.util.UUID;
 public interface PostService {
 
     UserPostDto findPostById(UUID id);
+    UserPostDto findByTitle(String title);
     UserPostDto savePost(UserPostDto userPostDto);
     void deleteById(UUID id);
-    Page<UserPostDto> findAll(String name, Long topicId, Pageable pageable);
+    Page<UserPostDto> findAll(String name, Long topicId, String period, Pageable pageable);
     List<PostTopicDto> getPostTagTopic();
     UserPostDto update(UUID id, UserPostDto post);
 }

@@ -5,6 +5,7 @@ import com.sakute.project_fumo_backend.domain.dto.post.PostMapper;
 import com.sakute.project_fumo_backend.domain.dto.post.UserPostDto;
 import com.sakute.project_fumo_backend.domain.enteties.post.UserPost;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.domain.service.FileService;
 import com.sakute.project_fumo_backend.repository.jpa_repo.PostTagTopicRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserPostRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
@@ -39,12 +40,14 @@ class PostServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private FileService fileService;
+
     private PostServiceImpl postService;
 
     @BeforeEach
     void setUp() {
-        // Ручна ініціалізація через конструктор — безпечніше ніж @InjectMocks через super()
-        postService = new PostServiceImpl(userRepository, postRepository, postMapper, postTagTopicRepository);
+        postService = new PostServiceImpl(userRepository, postRepository, postMapper, postTagTopicRepository, fileService);
     }
 
     // -------------------------------------------------------
@@ -111,17 +114,21 @@ class PostServiceImplTest {
     @Test
     void deleteById_shouldCallDelete_whenPostExists() {
         UUID id = UUID.randomUUID();
-        when(postRepository.existsByUserPostId(id)).thenReturn(true);
+        UserPost post = new UserPost();
+        post.setPhoto("/api/v1/files/posts/photo.jpg");
+
+        when(postRepository.findByUserPostId(id)).thenReturn(Optional.of(post));
 
         postService.deleteById(id);
 
-        verify(postRepository).deleteByUserPostId(id);
+        verify(postRepository).delete(post);
+        verify(fileService).deleteFile("/api/v1/files/posts/photo.jpg");
     }
 
     @Test
     void deleteById_shouldThrow_whenPostNotFound() {
         UUID id = UUID.randomUUID();
-        when(postRepository.existsByUserPostId(id)).thenReturn(false);
+        when(postRepository.findByUserPostId(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> postService.deleteById(id))
                 .isInstanceOf(NotFoundException.class)

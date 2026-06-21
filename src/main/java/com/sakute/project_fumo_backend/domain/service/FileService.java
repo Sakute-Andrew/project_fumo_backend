@@ -7,4 +7,5 @@ import java.io.IOException;
 public interface FileService {
     String upload(MultipartFile file) throws IOException;
     byte[] download(String subfolder, String fileName) throws IOException;
+    void deleteFile(String fileUrl);
 }

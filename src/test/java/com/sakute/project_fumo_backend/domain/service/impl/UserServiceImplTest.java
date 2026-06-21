@@ -6,6 +6,7 @@ import com.sakute.project_fumo_backend.domain.dto.user.UserMapper;
 import com.sakute.project_fumo_backend.domain.enteties.user.Permission;
 import com.sakute.project_fumo_backend.domain.enteties.user.Role;
 import com.sakute.project_fumo_backend.domain.enteties.user.User;
+import com.sakute.project_fumo_backend.repository.jpa_repo.DonationRepository;
 import com.sakute.project_fumo_backend.repository.jpa_repo.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,12 +36,13 @@ class UserServiceImplTest {
 
     @Mock private UserRepository userRepository;
     @Mock private UserMapper userMapper;
+    @Mock private DonationRepository donationRepository;
 
     private UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
-        userService = new UserServiceImpl(userRepository, userMapper);
+        userService = new UserServiceImpl(userRepository, userMapper, donationRepository);
     }
 
     // -------------------------------------------------------
@@ -115,7 +117,7 @@ class UserServiceImplTest {
 
         assertThatThrownBy(() -> userService.updateUser(id, new AdminUserDto()))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("not found");
+                .hasMessageContaining("знайдено");
     }
 
     @Test
